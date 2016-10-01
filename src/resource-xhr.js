@@ -116,32 +116,35 @@ ResourceXhr.xhr = function(method, path, data) {
     var request = new window.XMLHttpRequest();
     var payload = null;
 
-    switch (method) {
-        case 'get':
-        case 'delete':
-            path = path + ResourceXhr.serializeQuery(data);
+    return Promise.resolve()
+        .then(function() {
+            switch (method) {
+                case 'get':
+                case 'delete':
+                    path = path + ResourceXhr.serializeQuery(data);
 
-            break;
-        case 'put':
-        case 'post':
-            payload = data;
-    }
+                    break;
+                case 'put':
+                case 'post':
+                    payload = data;
+            }
 
-    request.open(method, path, true);
+            request.open(method, path, true);
 
-    if (payload) {
-        request.setRequestHeader('Content-Type', 'application/json');
-    }
+            if (payload) {
+                request.setRequestHeader('Content-Type', 'application/json');
+            }
 
-    request.timeout = 10000;
+            request.timeout = 10000;
 
-    return new Promise(function(resolve, reject) {
-        request.onload      = resolve;
-        request.onerror     = reject;
-        request.ontimeout   = reject;
+            return new Promise(function(resolve, reject) {
+                request.onload      = resolve;
+                request.onerror     = reject;
+                request.ontimeout   = reject;
 
-        request.send(payload ? JSON.stringify(payload) : '');
-    })
+                request.send(payload ? JSON.stringify(payload) : '');
+            });
+        })
         .then(function() {
             var response = {};
 
