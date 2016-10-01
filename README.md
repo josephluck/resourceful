@@ -1,6 +1,6 @@
 # Resourceful
 
-An promised-based interface for isomoprhic resources with built-in caching. Full documentation coming soon.
+A promised-based interface for isomoprhic resources with built-in caching. Full documentation coming soon.
 
 Current integrations:
 - Client-side via XHR
