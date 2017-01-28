@@ -35,7 +35,8 @@ class ResourceBase {
      * @public
      * @param   {object}    query
      * @param   {object}    [req=null]
-     *     An optional object containing data about the request (i.e. ExpressRequest)
+     *     An optional object containing data about the request
+     *     (i.e. ExpressRequest)
      * @return  {Promise.<object[]>}
      */
 

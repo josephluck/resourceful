@@ -22,7 +22,7 @@ var _ResourceBase2 = _interopRequireDefault(_ResourceBase);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_chai2.default.use(_chaiShallowDeepEqual2.default);
+_chai2.default.use(_chaiShallowDeepEqual2.default); /* eslint-disable no-magic-numbers */
 
 describe('ResourceBase', function () {
     var resource = new _ResourceBase2.default();

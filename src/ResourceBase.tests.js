@@ -1,3 +1,5 @@
+/* eslint-disable no-magic-numbers */
+
 import chai         from 'chai';
 import deepEqual    from 'chai-shallow-deep-equal';
 
