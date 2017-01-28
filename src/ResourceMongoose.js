@@ -1,4 +1,6 @@
-'use strict';
+/**
+ * FIXME: Needs migrating over to new format
+ */
 
 var ResourceBase = require('./resource-base');
 var ObjectId     = require('mongoose').Types.ObjectId;
