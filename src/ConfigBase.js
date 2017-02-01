@@ -5,6 +5,7 @@ class ConfigBase {
         this.secondaryKeys      = [];
         this.transformResponse  = null;
         this.transformEntry     = null;
+        this.transformError     = null;
         this.Model              = null;
     }
 }

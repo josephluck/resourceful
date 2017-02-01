@@ -60,7 +60,8 @@ class ResourceXhr extends IResource {
 
     static xhr(method, path, data) {
         const request = new window.XMLHttpRequest();
-        const ERROR_CODE_SERVER = 400;
+        const CODE_CLIENT_ERROR = 400;
+        const CODE_SERVER_ERROR = 500;
 
         let payload = null;
 
@@ -108,7 +109,9 @@ class ResourceXhr extends IResource {
                     }
                 }
 
-                if (request.status >= ERROR_CODE_SERVER) {
+                if (request.status >= CODE_CLIENT_ERROR && request.status < CODE_SERVER_ERROR) {
+                    throw response;
+                } else if (request.status >= CODE_SERVER_ERROR) {
                     throw new Error(request.status);
                 }
 
@@ -132,7 +135,8 @@ ResourceXhr.Private = class _ResourceXhr extends ResourceBase {
 
     create(body) {
         return ResourceXhr.xhr('post', this.config.path, body)
-            .then(this.transformResponse.bind(this));
+            .then(this.transformResponse.bind(this))
+            .catch(this.transformError.bind(this));
     }
 
     /**
@@ -148,7 +152,8 @@ ResourceXhr.Private = class _ResourceXhr extends ResourceBase {
         // and use flushCacheStore instead of flushCache
 
         return ResourceXhr.xhr('put', this.config.path, body)
-            .then(this.transformResponse.bind(this));
+            .then(this.transformResponse.bind(this))
+            .catch(this.transformError.bind(this));
     }
 
     /**
@@ -163,7 +168,8 @@ ResourceXhr.Private = class _ResourceXhr extends ResourceBase {
         // iterate through primary and secondary keys and flush secondary stores
 
         return ResourceXhr.xhr('delete', this.config.path, query)
-            .then(this.transformResponse.bind(this));
+            .then(this.transformResponse.bind(this))
+            .catch(this.transformError.bind(this));
     }
 
     /**
@@ -183,7 +189,8 @@ ResourceXhr.Private = class _ResourceXhr extends ResourceBase {
                 }
 
                 return entries;
-            });
+            })
+            .catch(this.transformError.bind(this));
     }
 };
 

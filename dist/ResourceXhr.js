@@ -90,7 +90,8 @@ var ResourceXhr = function (_IResource) {
         key: 'xhr',
         value: function xhr(method, path, data) {
             var request = new window.XMLHttpRequest();
-            var ERROR_CODE_SERVER = 400;
+            var CODE_CLIENT_ERROR = 400;
+            var CODE_SERVER_ERROR = 500;
 
             var payload = null;
 
@@ -136,7 +137,9 @@ var ResourceXhr = function (_IResource) {
                     }
                 }
 
-                if (request.status >= ERROR_CODE_SERVER) {
+                if (request.status >= CODE_CLIENT_ERROR && request.status < CODE_SERVER_ERROR) {
+                    throw response;
+                } else if (request.status >= CODE_SERVER_ERROR) {
                     throw new Error(request.status);
                 }
 
@@ -169,7 +172,7 @@ ResourceXhr.Private = function (_ResourceBase) {
     _createClass(_ResourceXhr, [{
         key: 'create',
         value: function create(body) {
-            return ResourceXhr.xhr('post', this.config.path, body).then(this.transformResponse.bind(this));
+            return ResourceXhr.xhr('post', this.config.path, body).then(this.transformResponse.bind(this)).catch(this.transformError.bind(this));
         }
 
         /**
@@ -186,7 +189,7 @@ ResourceXhr.Private = function (_ResourceBase) {
             // TODO: iterate through primary key and secondary keys,
             // and use flushCacheStore instead of flushCache
 
-            return ResourceXhr.xhr('put', this.config.path, body).then(this.transformResponse.bind(this));
+            return ResourceXhr.xhr('put', this.config.path, body).then(this.transformResponse.bind(this)).catch(this.transformError.bind(this));
         }
 
         /**
@@ -202,7 +205,7 @@ ResourceXhr.Private = function (_ResourceBase) {
 
             // iterate through primary and secondary keys and flush secondary stores
 
-            return ResourceXhr.xhr('delete', this.config.path, query).then(this.transformResponse.bind(this));
+            return ResourceXhr.xhr('delete', this.config.path, query).then(this.transformResponse.bind(this)).catch(this.transformError.bind(this));
         }
 
         /**
@@ -226,7 +229,7 @@ ResourceXhr.Private = function (_ResourceBase) {
                 }
 
                 return entries;
-            });
+            }).catch(this.transformError.bind(this));
         }
     }]);
 

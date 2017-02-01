@@ -167,6 +167,19 @@ class ResourceBase {
     }
 
     /**
+     * @param   {*} err
+     * @return  {*}
+     */
+
+    transformError(err) {
+        if (typeof this.config.transformError === 'function') {
+            throw this.config.transformError(err);
+        }
+
+        throw err;
+    }
+
+    /**
      * Passes a returned response through an optional "transform" function,
      * returning the transformed output before it is written to cache.
      *
