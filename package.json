@@ -1,7 +1,8 @@
 {
   "name": "resourceful",
-  "version": "0.0.0",
-  "main": "./dist/Resourceful.js",
+  "version": "0.0.1",
+  "main": "./dist/node.js",
+  "browser": "./dist/browser.js",
   "scripts": {
     "test": "mocha ./tests/unit.js",
     "babel": "babel src --out-dir dist --source-maps --copy-files --watch"
