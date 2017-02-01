@@ -1,8 +1,9 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+exports.ConfigBase = exports.IResource = exports.ResourceFs = exports.ResourceBase = undefined;
 
 var _ConfigBase = require('./ConfigBase');
 
@@ -22,10 +23,8 @@ var _ResourceFs2 = _interopRequireDefault(_ResourceFs);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = {
-    ConfigBase: _ConfigBase2.default,
-    IResource: _IResource2.default,
-    ResourceBase: _ResourceBase2.default,
-    ResourceFs: _ResourceFs2.default
-};
+exports.ResourceBase = _ResourceBase2.default;
+exports.ResourceFs = _ResourceFs2.default;
+exports.IResource = _IResource2.default;
+exports.ConfigBase = _ConfigBase2.default;
 //# sourceMappingURL=node.js.map
