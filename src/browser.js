@@ -3,9 +3,4 @@ import IResource    from './IResource';
 import ResourceBase from './ResourceBase';
 import ResourceXhr  from './ResourceXhr';
 
-export default {
-    ConfigBase,
-    IResource,
-    ResourceBase,
-    ResourceXhr
-};
+export {ResourceBase, ResourceXhr, IResource, ConfigBase};
