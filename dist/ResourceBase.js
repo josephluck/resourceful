@@ -82,7 +82,7 @@ var ResourceBase = function () {
             var wasFoundInCache = false;
 
             if (typeof (activeRequestPromise = this.activeRequests[requestId]) !== 'undefined') {
-                // If another idential request is already in progress, return a
+                // If another identical request is already in progress, return a
                 // reference to that request's promise
 
                 return activeRequestPromise;

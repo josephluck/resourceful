@@ -85,10 +85,17 @@ ResourceFs.Private = function (_ResourceBase) {
         value: function queryService() {
             var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-            var hasQuery = Object.keys(query).length;
             var alias = this.config.nameAlias;
 
+            var hasQuery = false;
+            var transform = null;
             var name = '';
+
+            if (typeof (transform = this.config.transformQuery) === 'function') {
+                query = transform(query);
+            }
+
+            hasQuery = Object.keys(query).length;
 
             if (hasQuery && typeof query.name === 'undefined') {
                 if (alias && (name = query[alias])) {

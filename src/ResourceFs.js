@@ -38,10 +38,17 @@ ResourceFs.Private = class _ResourceFs extends ResourceBase {
      */
 
     queryService(query={}) {
-        const hasQuery  = Object.keys(query).length;
-        const alias     = this.config.nameAlias;
+        const alias = this.config.nameAlias;
 
-        let name = '';
+        let hasQuery  = false;
+        let transform = null;
+        let name      = '';
+
+        if (typeof (transform = this.config.transformQuery) === 'function') {
+            query = transform(query);
+        }
+
+        hasQuery = Object.keys(query).length;
 
         if (hasQuery && typeof query.name === 'undefined') {
             if (alias && (name = query[alias])) {

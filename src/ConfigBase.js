@@ -3,6 +3,7 @@ class ConfigBase {
         this.enableCache        = true;
         this.primaryKey         = '';
         this.secondaryKeys      = [];
+        this.transformQuery     = null;
         this.transformResponse  = null;
         this.transformEntry     = null;
         this.transformError     = null;
