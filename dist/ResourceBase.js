@@ -30,6 +30,7 @@ var ResourceBase = function () {
     function ResourceBase() {
         _classCallCheck(this, ResourceBase);
 
+        this.hasInitialized = false;
         this.config = null;
         this.cache = new _KeyCache2.default();
         this.activeRequests = {};
@@ -103,8 +104,14 @@ var ResourceBase = function () {
                     return entries;
                 }
 
+                if (_this.config.initData && !_this.hasInitialized) {
+                    return _this.config.initData;
+                }
+
                 return _this.queryService(query);
             }).then(function (entries) {
+                _this.hasInitialized = true;
+
                 if (_this.config.enableCache && !wasFoundInCache) {
                     _this.writeToCache(query, entries);
 

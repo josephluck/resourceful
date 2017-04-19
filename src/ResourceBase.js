@@ -5,6 +5,7 @@ import Util        from './Util.js';
 
 class ResourceBase {
     constructor() {
+        this.hasInitialized = false;
         this.config         = null;
         this.cache          = new KeyCache();
         this.activeRequests = {};
@@ -70,9 +71,15 @@ class ResourceBase {
                         return entries;
                     }
 
+                    if (this.config.initData && !this.hasInitialized) {
+                        return this.config.initData;
+                    }
+
                     return this.queryService(query);
                 })
                 .then(entries => {
+                    this.hasInitialized = true;
+
                     if (this.config.enableCache && !wasFoundInCache) {
                         this.writeToCache(query, entries);
 
