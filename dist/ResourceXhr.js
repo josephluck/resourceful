@@ -129,9 +129,9 @@ var ResourceXhr = function (_IResource) {
             }).then(function () {
                 var response = {};
 
-                if (request.response) {
+                if (request.responseText) {
                     try {
-                        response = JSON.parse(request.response);
+                        response = JSON.parse(request.responseText);
                     } catch (e) {
                         throw new Error('[ResourceXhr] Response contained invalid JSON');
                     }

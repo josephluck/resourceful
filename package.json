@@ -1,6 +1,6 @@
 {
   "name": "resourceful",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "./dist/node.js",
   "browser": "./dist/browser.js",
   "scripts": {
