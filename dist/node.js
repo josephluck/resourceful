@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ConfigBase = exports.IResource = exports.ResourceFs = exports.ResourceBase = undefined;
+exports.ConfigBase = exports.IResource = exports.ResourceXhr = exports.ResourceFs = exports.ResourceBase = undefined;
 
 var _ConfigBase = require('./ConfigBase');
 
@@ -21,10 +21,15 @@ var _ResourceFs = require('./ResourceFs');
 
 var _ResourceFs2 = _interopRequireDefault(_ResourceFs);
 
+var _ResourceXhr = require('./ResourceXhr');
+
+var _ResourceXhr2 = _interopRequireDefault(_ResourceXhr);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.ResourceBase = _ResourceBase2.default;
 exports.ResourceFs = _ResourceFs2.default;
+exports.ResourceXhr = _ResourceXhr2.default;
 exports.IResource = _IResource2.default;
 exports.ConfigBase = _ConfigBase2.default;
 //# sourceMappingURL=node.js.map
