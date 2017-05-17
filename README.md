@@ -8,4 +8,4 @@ Current integrations:
 - Server-side via file system
 
 ---
-&copy; 2017 Patrick Kunka / KunkaLabs Ltd
+*&copy; 2017 Patrick Kunka / KunkaLabs Ltd*
