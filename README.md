@@ -6,3 +6,6 @@ Current integrations:
 - Client-side via XHR/fetch
 - Server-side via Mongoose ODM
 - Server-side via file system
+
+---
+&copy; 2017 Patrick Kunka / KunkaLabs Ltd
