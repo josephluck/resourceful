@@ -100,7 +100,7 @@ ResourceMongoose.Implementation = function (_ResourceBase) {
 
                 var $page = 1;
                 var $offset = 0;
-                var $limit = Infinity;
+                var $limit = 100;
                 var $sort = '';
 
                 if (query.$limit && query.$page) {

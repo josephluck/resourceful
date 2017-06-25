@@ -43,7 +43,7 @@ ResourceMongoose.Implementation = class extends ResourceBase {
 
                 let $page   = 1;
                 let $offset = 0;
-                let $limit  = Infinity;
+                let $limit  = 100;
                 let $sort   = '';
 
                 if (query.$limit && query.$page) {
