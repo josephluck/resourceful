@@ -96,7 +96,7 @@ ResourceMongoose.Implementation = function (_ResourceBase) {
             var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
             return Promise.resolve().then(function () {
-                var dbQuery = _this4.constructMongoQuery(query);
+                var dbQuery = constructMongoQuery(query);
 
                 var $page = 1;
                 var $offset = 0;
@@ -154,7 +154,7 @@ ResourceMongoose.Implementation = function (_ResourceBase) {
         value: function update(query, payload) {
             var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-            var dbQuery = this.constructMongoQuery(query);
+            var dbQuery = constructMongoQuery(query);
 
             return this.config.mongoose.Model.findOneAndUpdate(dbQuery, payload, {
                 upsert: Boolean(options.upsert)

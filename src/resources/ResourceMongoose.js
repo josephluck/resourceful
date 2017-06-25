@@ -39,7 +39,7 @@ ResourceMongoose.Implementation = class extends ResourceBase {
     queryService(query={}) {
         return Promise.resolve()
             .then(() => {
-                const dbQuery = this.constructMongoQuery(query);
+                const dbQuery = constructMongoQuery(query);
 
                 let $page   = 1;
                 let $offset = 0;
@@ -95,7 +95,7 @@ ResourceMongoose.Implementation = class extends ResourceBase {
      */
 
     update(query, payload, options={}) {
-        const dbQuery = this.constructMongoQuery(query);
+        const dbQuery = constructMongoQuery(query);
 
         return this.config.mongoose.Model.findOneAndUpdate(dbQuery, payload, {
             upsert: Boolean(options.upsert)
