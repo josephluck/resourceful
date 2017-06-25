@@ -3,33 +3,51 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ConfigBase = exports.IResource = exports.ResourceXhr = exports.ResourceFs = exports.ResourceBase = undefined;
 
-var _ConfigBase = require('./ConfigBase');
+var _ConfigBase = require('./config/ConfigBase');
 
-var _ConfigBase2 = _interopRequireDefault(_ConfigBase);
+Object.defineProperty(exports, 'ConfigBase', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_ConfigBase).default;
+  }
+});
 
-var _IResource = require('./IResource');
+var _IResource = require('./interfaces/IResource');
 
-var _IResource2 = _interopRequireDefault(_IResource);
+Object.defineProperty(exports, 'IResource', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_IResource).default;
+  }
+});
 
-var _ResourceBase = require('./ResourceBase');
+var _ResourceBase = require('./resources/ResourceBase');
 
-var _ResourceBase2 = _interopRequireDefault(_ResourceBase);
+Object.defineProperty(exports, 'ResourceBase', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_ResourceBase).default;
+  }
+});
 
-var _ResourceFs = require('./ResourceFs');
+var _ResourceFs = require('./resources/ResourceFs');
 
-var _ResourceFs2 = _interopRequireDefault(_ResourceFs);
+Object.defineProperty(exports, 'ResourceFs', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_ResourceFs).default;
+  }
+});
 
-var _ResourceXhr = require('./ResourceXhr');
+var _ResourceXhr = require('./resources/ResourceXhr');
 
-var _ResourceXhr2 = _interopRequireDefault(_ResourceXhr);
+Object.defineProperty(exports, 'ResourceXhr', {
+  enumerable: true,
+  get: function get() {
+    return _interopRequireDefault(_ResourceXhr).default;
+  }
+});
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.ResourceBase = _ResourceBase2.default;
-exports.ResourceFs = _ResourceFs2.default;
-exports.ResourceXhr = _ResourceXhr2.default;
-exports.IResource = _IResource2.default;
-exports.ConfigBase = _ConfigBase2.default;
 //# sourceMappingURL=node.js.map

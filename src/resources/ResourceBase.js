@@ -1,7 +1,7 @@
-import KeyCache    from './KeyCache';
-import ValueCache  from './ValueCache';
-import ConfigBase  from './ConfigBase';
-import Util        from './Util.js';
+import KeyCache    from '../models/KeyCache';
+import ValueCache  from '../models/ValueCache';
+import ConfigRoot  from '../config/ConfigRoot';
+import Util        from '../Util.js';
 
 class ResourceBase {
     constructor() {
@@ -59,7 +59,7 @@ class ResourceBase {
                 .then(() => {
                     let entries = null;
 
-                    if (this.config.enableCache) {
+                    if (this.config.cache.enable) {
                         entries = this.readFromCache(query);
                     }
 
@@ -71,8 +71,8 @@ class ResourceBase {
                         return entries;
                     }
 
-                    if (this.config.initData && !this.hasInitialized) {
-                        return this.config.initData;
+                    if (this.config.data.init && !this.hasInitialized) {
+                        return this.config.data.init;
                     }
 
                     return this.queryService(query);
@@ -80,7 +80,7 @@ class ResourceBase {
                 .then(entries => {
                     this.hasInitialized = true;
 
-                    if (this.config.enableCache && !wasFoundInCache) {
+                    if (this.config.cache.enable && !wasFoundInCache) {
                         this.writeToCache(query, entries);
 
                         entries = this.readFromCache(query);
@@ -163,14 +163,16 @@ class ResourceBase {
      * @return  {void}
      */
 
-    configure(config, ConfigModel=ConfigBase) {
+    configure(config, ConfigModel=ConfigRoot) {
         this.config = new ConfigModel();
 
-        if (!(this.config instanceof ConfigBase)) {
+        Object.seal(this.config);
+
+        if (!(this.config instanceof ConfigRoot)) {
             throw new TypeError('[resource-base] Resource config must be an ancestor of `ConfigBase`');
         }
 
-        Util.extend(this.config, config);
+        Util.extend(this.config, config, true);
     }
 
     /**
@@ -179,8 +181,10 @@ class ResourceBase {
      */
 
     transformError(err) {
-        if (typeof this.config.transformError === 'function') {
-            throw this.config.transformError(err);
+        let transform = null;
+
+        if (typeof (transform = this.config.transform.error) === 'function') {
+            throw transform(err);
         }
 
         throw err;
@@ -196,8 +200,10 @@ class ResourceBase {
      */
 
     transformResponse(response) {
-        if (typeof this.config.transformResponse === 'function') {
-            return this.config.transformResponse(response);
+        let transform = null;
+
+        if (typeof (transform = this.config.transform.response) === 'function') {
+            return transform(response);
         }
 
         return response;
@@ -218,13 +224,15 @@ class ResourceBase {
 
         return Promise.resolve()
             .then(() => {
-                if (typeof this.config.Model !== 'function') {
+                let Model = null;
+
+                if (typeof (Model = this.config.data.Model) !== 'function') {
                     model = entry;
 
                     return;
                 }
 
-                model = new this.config.Model();
+                model = new Model();
 
                 Util.extend(model, entry, true);
 
@@ -233,8 +241,10 @@ class ResourceBase {
                 }
             })
             .then(() => {
-                if (typeof this.config.transformEntry === 'function') {
-                    return this.config.transformEntry(model, req);
+                let transform = null;
+
+                if (typeof (transform = this.config.transform.entry) === 'function') {
+                    return transform(model, req);
                 }
 
                 return model;
@@ -273,12 +283,12 @@ class ResourceBase {
 
     writeToCache(query, entries) {
         const store                 = this.getCacheStore(query, true);
-        const cacheBySecondaryKeys  = this.config.secondaryKeys.length > 0;
+        const cacheBySecondaryKeys  = this.config.cache.secondaryKeys.length > 0;
 
         let primaryKeyValue = null;
         let cacheByPrimaryKey = false;
 
-        if ((primaryKeyValue = query[this.config.primaryKey]) && Array.isArray(primaryKeyValue)) {
+        if ((primaryKeyValue = query[this.config.cache.primaryKey]) && Array.isArray(primaryKeyValue)) {
             cacheByPrimaryKey = true;
         }
 
@@ -388,15 +398,15 @@ class ResourceBase {
             if (cacheByPrimaryKey) {
                 let query = {};
 
-                query[this.config.primaryKey] = entry[this.config.primaryKey];
+                query[this.config.cache.primaryKey] = entry[this.config.cache.primaryKey];
 
                 this.writeToCache(query, [entry]);
             }
 
             if (!cacheBySecondaryKeys) continue;
 
-            for (j = 0; j < this.config.secondaryKeys.length; j++) {
-                key = this.config.secondaryKeys[j];
+            for (j = 0; j < this.config.cache.secondaryKeys.length; j++) {
+                key = this.config.cache.secondaryKeys[j];
 
                 if (typeof entry[key] === 'string') {
                     query = {};

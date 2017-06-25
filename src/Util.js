@@ -26,9 +26,9 @@ class Util {
             let key = sourceKeys[i];
             let descriptor = Object.getOwnPropertyDescriptor(source, key);
 
-            // Skip computed properties
+            // Skip non-enumerable computed properties
 
-            if (typeof descriptor.get === 'function') continue;
+            if (typeof descriptor.get === 'function' && !descriptor.enumerable) continue;
 
             if (!deep || typeof source[key] !== 'object') {
                 // All non-object primitives, or all properties if

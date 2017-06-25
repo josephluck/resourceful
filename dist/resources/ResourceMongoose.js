@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * FIXME: Needs migrating over to new format
  */
@@ -307,3 +309,4 @@
 // };
 
 module.exports = ResourceMongoose;
+//# sourceMappingURL=ResourceMongoose.js.map

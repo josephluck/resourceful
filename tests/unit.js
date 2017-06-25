@@ -2,4 +2,4 @@ require('source-map-support').install();
 
 require('babel-register');
 
-require('../src/ResourceBase.tests.js');
+require('../src/resources/ResourceBase.tests.js');

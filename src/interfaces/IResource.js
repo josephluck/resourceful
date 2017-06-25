@@ -1,6 +1,6 @@
 class IResource {
     constructor() {
-        const _ = new this.constructor.Private(...arguments);
+        const _ = new this.constructor.Implementation(...arguments);
 
         this.get                = _.get.bind(_);
         this.getOne             = _.getOne.bind(_);
@@ -10,7 +10,7 @@ class IResource {
         this.flushCache         = _.flushCache.bind(_);
         this.flushCacheStore    = _.flushCacheStore.bind(_);
 
-        Object.seal(this);
+        Object.freeze(this);
     }
 }
 

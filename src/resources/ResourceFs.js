@@ -2,31 +2,40 @@ import path         from 'path';
 import fs           from 'fs-extra';
 
 import ResourceBase from './ResourceBase';
-import ConfigFs     from './ConfigFs';
-import IResource    from './IResource';
-import File         from './File';
+import ConfigRoot   from '../config/ConfigRoot';
+import ConfigFs     from '../config/ConfigFs';
+import IResource    from '../interfaces/IResource';
+import File         from '../models/File';
 
-class ResourceFs extends IResource {
+class ResourceFs extends IResource {}
+
+const Config = class extends ConfigRoot {
     constructor() {
-        super(...arguments);
-    }
-}
+        super();
 
-ResourceFs.Private = class _ResourceFs extends ResourceBase {
+        this.fs = new ConfigFs();
+
+        Object.seal(this);
+    }
+};
+
+ResourceFs.Implementation = class extends ResourceBase {
     constructor(config) {
         super();
 
-        if (!config.extension) {
+        this.configure(config, Config);
+
+        if (!config.fs.extension) {
             throw new Error('[resource-fs] No file extension specified');
         }
 
-        if (config.extension.charAt(0) !== '.') {
-            config.extension = '.' + config.extension;
+        if (config.fs.extension.charAt(0) !== '.') {
+            config.fs.extension = '.' + config.fs.extension;
         }
 
-        this.configure(config, ConfigFs);
+        this.root = path.resolve(this.config.fs.path);
 
-        this.root = path.resolve(this.config.path);
+        Object.seal(this);
     }
 
     /**
@@ -38,25 +47,25 @@ ResourceFs.Private = class _ResourceFs extends ResourceBase {
      */
 
     queryService(query={}) {
-        const alias = this.config.nameAlias;
+        const nameKey = this.config.fs.nameKey;
 
         let hasQuery  = false;
         let transform = null;
         let name      = '';
 
-        if (typeof (transform = this.config.transformQuery) === 'function') {
+        if (typeof (transform = this.config.transform.query) === 'function') {
             query = transform(query);
         }
 
         hasQuery = Object.keys(query).length;
 
         if (hasQuery && typeof query.name === 'undefined') {
-            if (alias && (name = query[alias])) {
-                // Create new aliased query to preserve cache keys
+            if (nameKey && (name = query[nameKey])) {
+                // Create new nameKeyed query to preserve cache keys
 
                 query = {name};
             } else {
-                throw new Error('[resource-fs] Files may only be queried by `name`. Please provide an alias.');
+                throw new Error('[resource-fs] Files may only be queried by `name`. Please provide a name key.');
             }
         }
 
@@ -90,7 +99,7 @@ ResourceFs.Private = class _ResourceFs extends ResourceBase {
      */
 
     getFileByName(name) {
-        const extRe = new RegExp(this.config.extension + '$', 'g');
+        const extRe = new RegExp(this.config.fs.extension + '$', 'g');
 
         if (name.match(extRe)) {
             // Strip extension from filename is present
@@ -98,14 +107,14 @@ ResourceFs.Private = class _ResourceFs extends ResourceBase {
             name = name.replace(extRe, '');
         }
 
-        const filePath = path.join(this.root, name + this.config.extension);
+        const filePath = path.join(this.root, name + this.config.fs.extension);
 
         return new Promise((resolve, reject) => {
             fs.readFile(filePath, (err, data) => err ? reject(err) : resolve(data));
         })
             .then(buffer => new File(name, buffer.toString()))
             .then(file => {
-                if (this.config.extension !== '.json') return file;
+                if (this.config.fs.extension !== '.json') return file;
 
                 return JSON.parse(file.contents);
             })
@@ -128,7 +137,7 @@ ResourceFs.Private = class _ResourceFs extends ResourceBase {
                 // specified extension
 
                 return list.filter(fileName => {
-                    return fileName.match(/^[^.]/g) && fileName.match(new RegExp(this.config.extension + '$', 'g'));
+                    return fileName.match(/^[^.]/g) && fileName.match(new RegExp(this.config.fs.extension + '$', 'g'));
                 });
             })
             .then(filenames => Promise.all(filenames.map(this.getFileByName.bind(this))));

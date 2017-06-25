@@ -3,8 +3,8 @@
 import chai         from 'chai';
 import deepEqual    from 'chai-shallow-deep-equal';
 
-import mockEntries  from '../tests/mock/people.json';
-import Api          from '../tests/mock/api.js';
+import mockEntries  from '../../tests/mock/people.json';
+import Api          from '../../tests/mock/api.js';
 import ResourceBase from './ResourceBase.js';
 
 chai.use(deepEqual);
@@ -14,8 +14,10 @@ describe('ResourceBase', function() {
     const api           = new Api(mockEntries);
 
     resource.configure({
-        primaryKey: 'id',
-        enableCache: true
+        cache: {
+            primaryKey: 'id',
+            enable: true
+        }
     });
 
     resource.queryService = api.get.bind(api);

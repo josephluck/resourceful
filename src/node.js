@@ -1,7 +1,5 @@
-import ConfigBase   from './ConfigBase';
-import IResource    from './IResource';
-import ResourceBase from './ResourceBase';
-import ResourceFs   from './ResourceFs';
-import ResourceXhr  from './ResourceXhr';
-
-export {ResourceBase, ResourceFs, ResourceXhr, IResource, ConfigBase};
+export {default as ConfigBase}   from './config/ConfigBase';
+export {default as IResource}    from './interfaces/IResource';
+export {default as ResourceBase} from './resources/ResourceBase';
+export {default as ResourceFs}   from './resources/ResourceFs';
+export {default as ResourceXhr}  from './resources/ResourceXhr';
