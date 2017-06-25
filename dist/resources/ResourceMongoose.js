@@ -156,9 +156,9 @@ ResourceMongoose.Implementation = function (_ResourceBase) {
 
             var dbQuery = constructMongoQuery(query);
 
-            return this.config.mongoose.Model.findOneAndUpdate(dbQuery, payload, {
-                upsert: Boolean(options.upsert)
-            }).then(transformDocumentToPlainObject);
+            return this.config.mongoose.Model.findOneAndUpdate(dbQuery, payload, options).then(function (document) {
+                return document ? transformDocumentToPlainObject(document) : null;
+            });
         }
 
         /**
@@ -217,8 +217,10 @@ function constructMongoQuery(query) {
         }
     }
 
-    delete dbQuery.pageNumber;
-    delete dbQuery.entriesPerPage;
+    delete dbQuery.$limit;
+    delete dbQuery.$offset;
+    delete dbQuery.$page;
+    delete dbQuery.$sort;
 
     return dbQuery;
 }
