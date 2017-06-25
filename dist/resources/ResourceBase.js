@@ -217,7 +217,7 @@ var ResourceBase = function () {
                 throw new TypeError('[resource-base] Resource config must be an ancestor of `ConfigBase`');
             }
 
-            _Util2.default.extend(this.config, config);
+            _Util2.default.extend(this.config, config, true);
         }
 
         /**

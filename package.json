@@ -18,5 +18,8 @@
     "mocha": "^3.0.2",
     "mocha-lcov-reporter": "^1.2.0",
     "source-map-support": "^0.4.6"
+  },
+  "dependencies": {
+    "fs-extra": "^3.0.1"
   }
 }

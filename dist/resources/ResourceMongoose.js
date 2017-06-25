@@ -1,312 +1,268 @@
-"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _mongoose = require('mongoose');
+
+var _ResourceBase2 = require('./ResourceBase');
+
+var _ResourceBase3 = _interopRequireDefault(_ResourceBase2);
+
+var _ConfigRoot2 = require('../config/ConfigRoot');
+
+var _ConfigRoot3 = _interopRequireDefault(_ConfigRoot2);
+
+var _ConfigMongoose = require('../config/ConfigMongoose');
+
+var _ConfigMongoose2 = _interopRequireDefault(_ConfigMongoose);
+
+var _IResource2 = require('../interfaces/IResource');
+
+var _IResource3 = _interopRequireDefault(_IResource2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ResourceMongoose = function (_IResource) {
+    _inherits(ResourceMongoose, _IResource);
+
+    function ResourceMongoose() {
+        _classCallCheck(this, ResourceMongoose);
+
+        return _possibleConstructorReturn(this, (ResourceMongoose.__proto__ || Object.getPrototypeOf(ResourceMongoose)).apply(this, arguments));
+    }
+
+    return ResourceMongoose;
+}(_IResource3.default);
+
+var Config = function (_ConfigRoot) {
+    _inherits(Config, _ConfigRoot);
+
+    function Config() {
+        _classCallCheck(this, Config);
+
+        var _this2 = _possibleConstructorReturn(this, (Config.__proto__ || Object.getPrototypeOf(Config)).call(this));
+
+        _this2.mongoose = new _ConfigMongoose2.default();
+
+        Object.seal(_this2);
+        return _this2;
+    }
+
+    return Config;
+}(_ConfigRoot3.default);
+
+var ObjectId = _mongoose.Types.ObjectId;
+
+
+ResourceMongoose.Implementation = function (_ResourceBase) {
+    _inherits(_class, _ResourceBase);
+
+    function _class(config) {
+        _classCallCheck(this, _class);
+
+        var _this3 = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this));
+
+        _this3.configure(config, Config);
+
+        Object.seal(_this3);
+        return _this3;
+    }
+
+    /**
+     * Implements the service call for this type of resource.
+     *
+     * @private
+     * @param   {object} query
+     * @return  {object[]}
+     */
+
+    _createClass(_class, [{
+        key: 'queryService',
+        value: function queryService() {
+            var _this4 = this;
+
+            var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            return Promise.resolve().then(function () {
+                var dbQuery = _this4.constructMongoQuery(query);
+
+                var $page = 1;
+                var $offset = 0;
+                var $limit = Infinity;
+                var $sort = '';
+
+                if (query.$limit && query.$page) {
+                    $page = parseInt(query.$page);
+                    $limit = parseInt(query.$limit);
+
+                    if ($limit < Infinity) {
+                        $offset = $limit * ($page - 1);
+                    }
+
+                    $sort = '-_id';
+                } else if (query.$limit && typeof query.$offset === 'number') {
+                    $limit = query.$limit;
+                    $offset = query.$offset;
+                }
+
+                if (!Object.keys(query).length) {
+                    $sort = '-_id';
+                }
+
+                return _this4.config.mongoose.Model.find(dbQuery, '-__v').sort($sort).skip($offset).limit($limit).populate(_this4.config.mongoose.populate).then(function (documents) {
+                    return documents.map(transformDocumentToPlainObject);
+                });
+            });
+        }
+
+        /**
+         * @public
+         * @param   {object} payload
+         * @return  {Promise<object>}
+         */
+
+    }, {
+        key: 'create',
+        value: function create(payload) {
+            var doc = new this.config.mongoose.Model(payload);
+
+            return doc.save().then(transformDocumentToPlainObject);
+        }
+
+        /**
+         * @public
+         * @param   {object}    query
+         * @param   {object}    payload
+         * @param   {object}   [options={}]
+         * @return  {Promise}
+         */
+
+    }, {
+        key: 'update',
+        value: function update(query, payload) {
+            var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+            var dbQuery = this.constructMongoQuery(query);
+
+            return this.config.mongoose.Model.findOneAndUpdate(dbQuery, payload, {
+                upsert: Boolean(options.upsert)
+            }).then(transformDocumentToPlainObject);
+        }
+
+        /**
+         * @public
+         * @param   {object}    query
+         * @return  {Promise}
+         */
+
+    }, {
+        key: 'delete',
+        value: function _delete(query) {
+            var _this5 = this;
+
+            var dbQuery = constructMongoQuery(query);
+
+            var doc = null;
+
+            return this.config.mongoose.Model.findOne(dbQuery, '-__v').then(function (_doc) {
+                doc = _doc;
+
+                return _this5.config.mongoose.Model.findOneAndRemove(dbQuery);
+            }).then(function () {
+                return transformDocumentToPlainObject(doc);
+            });
+        }
+    }]);
+
+    return _class;
+}(_ResourceBase3.default);
 
 /**
- * FIXME: Needs migrating over to new format
+ * @private
+ * @static
+ * @param   {object}    query
+ * @return  {object}
  */
 
-// var ResourceBase = require('./resource-base');
-// var ObjectId     = require('mongoose').Types.ObjectId;
-
-// var ResourceMongoose = function() {
-//     var args = Array.prototype.concat.apply([null], arguments);
-//     var _    = new (ResourceMongoose.Private.bind.apply(ResourceMongoose.Private, args))();
-
-//     this.getOne         = _.getOne.bind(_);
-//     this.get            = _.get.bind(_);
-//     this.create         = _.create.bind(_);
-//     this.update         = _.update.bind(_);
-//     this.delete         = _.delete.bind(_);
-//     this.flushCache     = _.flushCache.bind(_);
-
-//     Object.seal(this);
-// };
-
-// ResourceMongoose.Private = function() {
-//     ResourceBase.apply(this, arguments);
-
-//     this.config = new ResourceMongoose.Config();
-
-//     Object.seal(this);
-
-//     this.init.apply(this, arguments);
-// };
-
-// ResourceMongoose.Private.prototype = Object.create(ResourceBase.prototype);
-
-// Object.assign(ResourceMongoose.Private.prototype, {
-//     constructor: ResourceMongoose.Private,
-
-//     /**
-//      * @private
-//      * @param   {object} [query]
-//      * @return  {Promise<object[]>}
-//      */
-
-//     get: function(query) {
-//         var self       = this;
-//         var wasCached  = false;
-//         var requestId  = '';
-
-//         requestId = ResourceBase.getRequestId(arguments);
-
-//         if (self.activeRequests[requestId]) {
-//             // One or more identical requests already exists, return reference to original promise
-
-//             return self.activeRequests[requestId];
-//         }
-
-//         return (self.activeRequests[requestId] = (Promise.resolve()
-//             .then(function() {
-//                 var resources       = null;
-//                 var dbQuery         = null;
-//                 var pageNumber      = 1;
-//                 var entriesPerPage  = void(0);
-//                 var startIndex      = 0;
-//                 var sort            = '';
-
-//                 // TODO: make DB-specifics configurable to resource - resource should be generic by default
-
-//                 if (query && query.entriesPerPage) {
-//                     // Set pagination instructions
-
-//                     pageNumber      = parseInt(query.pageNumber);
-//                     entriesPerPage  = parseInt(query.entriesPerPage);
-
-//                     if (entriesPerPage < Infinity) {
-//                         startIndex = entriesPerPage * (pageNumber - 1);
-//                     }
-
-//                     sort = '-_id';
-//                 }
-
-//                 if (!query || !Object.keys(query).length) {
-//                     sort = '-_id';
-//                 }
-
-//                 if (self.config.enableCache) {
-//                     // Find resources already in the cache
-
-//                     resources = self.readFromCache(query);
-//                 }
-
-//                 if (resources) {
-//                     wasCached = true;
-
-//                     return resources;
-//                 } else {
-//                     dbQuery = self.constructMongoQuery(query);
-
-//                     return self.config.Model.find(dbQuery, '-__v')
-//                         .sort(sort)
-//                         .skip(startIndex)
-//                         .limit(entriesPerPage)
-//                         .populate(self.config.populate)
-//                         .then(function(documents) {
-//                             return Promise.all(documents.map(function(document) {
-//                                 var args = Array.prototype.slice.call(arguments, 1);
-
-//                                 args.unshift(document);
-
-//                                 return self.transformDocument.apply(self, args);
-//                             }));
-//                         });
-//                 }
-//             })
-//             .then(function(resources) {
-//                 delete self.activeRequests[requestId];
-
-//                 if (self.config.enableCache && !wasCached) {
-//                     self.writeToCache(query, resources);
-
-//                     return self.readFromCache(query);
-//                 } else {
-//                     return resources;
-//                 }
-//             })));
-//     },
-
-//     /**
-//      * @private
-//      * @param   {object}    query
-//      * @return  {object}
-//      */
-
-//     constructMongoQuery: function(query) {
-//         var dbQuery = {};
-//         var key     = '';
-//         var value   = null;
-
-//         for (key in query) {
-//             value = query[key];
-
-//             if (Array.isArray(value)) {
-//                 value = {
-//                     $in: value
-//                 };
-//             }
-
-//             if (key === 'id') {
-//                 // Rename id to _id if present in query
-
-//                 dbQuery['_id'] = value;
-//             } else {
-//                 dbQuery[key] = value;
-//             }
-//         }
-
-//         delete dbQuery.pageNumber;
-//         delete dbQuery.entriesPerPage;
-
-//         return dbQuery;
-//     },
-
-//     /**
-//      * @private
-//      * @param   {Document} document
-//      * @return  {Promise<object>}
-//      */
-
-//     transformDocument: function(document) {
-//         var self     = this;
-//         var resource = null;
-//         var args     = null;
-
-//         return Promise.resolve()
-//             .then(function() {
-//                 args = Array.prototype.slice(arguments, 1);
-
-//                 resource = document.toObject({
-//                     virtuals: true
-//                 });
-
-//                 delete resource._id;
-//                 delete resource.__v;
-
-//                 self.stripMongoCruft(resource);
-//             })
-//             .then(function() {
-//                 var model = null;
-
-//                 if (typeof self.config.ViewModel === 'function') {
-//                     model = new self.config.ViewModel();
-
-//                     resource = Object.assign(model, resource);
-
-//                     if (typeof model.init === 'function') {
-//                         args.unshift(self.resourceProvider);
-
-//                         return model.init.apply(model, args);
-//                     }
-//                 }
-//             })
-//             .then(function() {
-//                 return resource;
-//             });
-//     },
-
-//     /**
-//      * Convert any Mongo ObjectId values to strings.
-//      *
-//      * @private
-//      * @param {object} mongoObject
-//      */
-
-//     stripMongoCruft: function(mongoObject) {
-//         var self    = this,
-//             key     = null,
-//             prop    = null;
-
-//         for (key in mongoObject) {
-//             prop = mongoObject[key];
-
-//             if (!prop) continue;
-
-//             if (prop instanceof ObjectId) {
-//                 mongoObject[key] = prop.toString();
-//             } else if (prop instanceof Date) {
-//                 mongoObject[key] = prop.toISOString();
-//             } else if (typeof prop === 'object') {
-//                 self.stripMongoCruft(prop);
-//             }
-//         }
-//     },
-
-//     /**
-//      * @param   {object} payload
-//      * @return  {Promise<object>}
-//      */
-
-//     create: function(payload) {
-//         var self        = this,
-//             resource    = null;
-
-//         resource = new self.config.Model(payload);
-
-//         return resource.save()
-//             .then(function(document) {
-//                 return self.transformDocument(document);
-//             });
-//     },
-
-//     /**
-//      * @param   {object}    query
-//      * @param   {object}    payload
-//      * @param   {object}   [options]
-//      * @return  {Promise}
-//      */
-
-//     update: function(query, payload, options) {
-//         var self        = this,
-//             dbQuery     = null;
-
-//         options = options || {};
-
-//         dbQuery = self.constructMongoQuery(query);
-
-//         return self.config.Model.findOneAndUpdate(dbQuery, payload, {
-//             upsert: options.upsert ? true : false
-//         })
-//             .then(function(document) {
-//                 return self.transformDocument(document);
-//             });
-//     },
-
-//     /**
-//      * @param   {object}    query
-//      * @param   {object}    [options]
-//      * @return  {Promise}
-//      */
-
-//     delete: function(query, options) {
-//         var self        = this;
-//         var dbQuery     = null;
-//         var document    = null;
-
-//         options = options || {};
-
-//         dbQuery = self.constructMongoQuery(query);
-
-//         return self.config.Model.findOne(dbQuery, '-__v')
-//             .then(function(_document) {
-//                 document = _document;
-
-//                 return self.config.Model.findOneAndRemove(dbQuery);
-//             })
-//             .then(function() {
-//                 return self.transformDocument(document);
-//             });
-//     }
-// });
-
-// ResourceMongoose.Config = function() {
-//     ResourceBase.ConfigBase.call(this);
-
-//     this.Model     = null;
-//     this.ViewModel = null;
-//     this.populate  = '';
-
-//     Object.seal(this);
-// };
-
-module.exports = ResourceMongoose;
+function constructMongoQuery(query) {
+    var dbQuery = {};
+
+    for (var key in query) {
+        var value = query[key];
+
+        if (Array.isArray(value)) {
+            value = {
+                $in: value
+            };
+        }
+
+        if (key === 'id') {
+            // Rename id to _id if present in query
+
+            dbQuery['_id'] = value;
+        } else {
+            dbQuery[key] = value;
+        }
+    }
+
+    delete dbQuery.pageNumber;
+    delete dbQuery.entriesPerPage;
+
+    return dbQuery;
+}
+
+/**
+ * @private
+ * @static
+ * @param   {Document} document
+ * @return  {object}
+ */
+
+function transformDocumentToPlainObject(document) {
+    var obj = document.toObject({
+        virtuals: true
+    });
+
+    delete obj._id;
+    delete obj.__v;
+
+    stripMongoCruft(obj);
+}
+
+/**
+ * Converts any MongDB types to strings.
+ *
+ * @private
+ * @param {object} obj
+ */
+
+function stripMongoCruft(obj) {
+    for (var key in obj) {
+        var value = obj[key];
+
+        if (!value) continue;
+
+        if (value instanceof ObjectId) {
+            obj[key] = value.toString();
+        } else if (value instanceof Date) {
+            obj[key] = value.toISOString();
+        } else if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
+            stripMongoCruft(value);
+        }
+    }
+}
+
+exports.default = ResourceMongoose;
 //# sourceMappingURL=ResourceMongoose.js.map

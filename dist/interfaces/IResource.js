@@ -19,7 +19,7 @@ var IResource = function IResource() {
     this.flushCache = _.flushCache.bind(_);
     this.flushCacheStore = _.flushCacheStore.bind(_);
 
-    Object.seal(this);
+    Object.freeze(this);
 };
 
 exports.default = IResource;

@@ -4,12 +4,12 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _ConfigBase = require('./config/ConfigBase');
+var _ConfigRoot = require('./config/ConfigRoot');
 
-Object.defineProperty(exports, 'ConfigBase', {
+Object.defineProperty(exports, 'ConfigRoot', {
   enumerable: true,
   get: function get() {
-    return _interopRequireDefault(_ConfigBase).default;
+    return _interopRequireDefault(_ConfigRoot).default;
   }
 });
 

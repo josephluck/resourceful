@@ -47,9 +47,9 @@ var Util = function () {
                 var key = sourceKeys[_i];
                 var descriptor = Object.getOwnPropertyDescriptor(source, key);
 
-                // Skip computed properties
+                // Skip non-enumerable computed properties
 
-                if (typeof descriptor.get === 'function') continue;
+                if (typeof descriptor.get === 'function' && !descriptor.enumerable) continue;
 
                 if (!deep || _typeof(source[key]) !== 'object') {
                     // All non-object primitives, or all properties if

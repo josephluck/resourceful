@@ -29,8 +29,10 @@ describe('ResourceBase', function () {
     var api = new _api2.default(_people2.default);
 
     resource.configure({
-        primaryKey: 'id',
-        enableCache: true
+        cache: {
+            primaryKey: 'id',
+            enable: true
+        }
     });
 
     resource.queryService = api.get.bind(api);

@@ -135,7 +135,7 @@ function constructMongoQuery(query) {
     const dbQuery = {};
 
     for (let key in query) {
-        const value = query[key];
+        let value = query[key];
 
         if (Array.isArray(value)) {
             value = {

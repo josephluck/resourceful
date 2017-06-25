@@ -90,6 +90,8 @@ ResourceFs.Implementation = function (_ResourceBase) {
         }
 
         _this3.root = _path2.default.resolve(_this3.config.fs.path);
+
+        Object.seal(_this3);
         return _this3;
     }
 
