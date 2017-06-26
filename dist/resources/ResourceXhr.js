@@ -85,7 +85,7 @@ ResourceXhr.Implementation = function (_ResourceBase) {
     _createClass(_class, [{
         key: 'create',
         value: function create(body) {
-            return ResourceXhr.xhr('post', this.config.path, body).then(this.transformResponse.bind(this)).catch(this.transformError.bind(this));
+            return xhr('post', this.config.path, body).then(this.transformResponse.bind(this)).catch(this.transformError.bind(this));
         }
 
         /**
@@ -102,7 +102,7 @@ ResourceXhr.Implementation = function (_ResourceBase) {
             // TODO: iterate through primary key and secondary keys,
             // and use flushCacheStore instead of flushCache
 
-            return ResourceXhr.xhr('put', this.config.path, body).then(this.transformResponse.bind(this)).catch(this.transformError.bind(this));
+            return xhr('put', this.config.path, body).then(this.transformResponse.bind(this)).catch(this.transformError.bind(this));
         }
 
         /**
@@ -118,7 +118,7 @@ ResourceXhr.Implementation = function (_ResourceBase) {
 
             // iterate through primary and secondary keys and flush secondary stores
 
-            return ResourceXhr.xhr('delete', this.config.path, query).then(this.transformResponse.bind(this)).catch(this.transformError.bind(this));
+            return xhr('delete', this.config.path, query).then(this.transformResponse.bind(this)).catch(this.transformError.bind(this));
         }
 
         /**
@@ -134,7 +134,7 @@ ResourceXhr.Implementation = function (_ResourceBase) {
         value: function queryService(query) {
             var _this4 = this;
 
-            return ResourceXhr.xhr('get', this.config.path, query).then(function (response) {
+            return xhr('get', this.config.path, query).then(function (response) {
                 return _this4.transformResponse(response);
             }).then(function (entries) {
                 if (!Array.isArray(entries)) {
