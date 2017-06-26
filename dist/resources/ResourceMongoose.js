@@ -241,6 +241,8 @@ function transformDocumentToPlainObject(document) {
     delete obj.__v;
 
     stripMongoCruft(obj);
+
+    return obj;
 }
 
 /**
