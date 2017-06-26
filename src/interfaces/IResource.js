@@ -10,7 +10,7 @@ class IResource {
         this.flushCache         = _.flushCache.bind(_);
         this.flushCacheStore    = _.flushCacheStore.bind(_);
 
-        Object.freeze(this);
+        Object.seal(this);
     }
 }
 
