@@ -31,7 +31,7 @@ ResourceXhr.Implementation = class extends ResourceBase {
      */
 
     create(body) {
-        return xhr('post', this.config.path, body)
+        return xhr('post', this.config.xhr.path, body)
             .then(this.transformResponse.bind(this))
             .catch(this.transformError.bind(this));
     }
@@ -48,7 +48,7 @@ ResourceXhr.Implementation = class extends ResourceBase {
         // TODO: iterate through primary key and secondary keys,
         // and use flushCacheStore instead of flushCache
 
-        return xhr('put', this.config.path, body)
+        return xhr('put', this.config.xhr.path, body)
             .then(this.transformResponse.bind(this))
             .catch(this.transformError.bind(this));
     }
@@ -64,7 +64,7 @@ ResourceXhr.Implementation = class extends ResourceBase {
 
         // iterate through primary and secondary keys and flush secondary stores
 
-        return xhr('delete', this.config.path, query)
+        return xhr('delete', this.config.xhr.path, query)
             .then(this.transformResponse.bind(this))
             .catch(this.transformError.bind(this));
     }
@@ -78,7 +78,7 @@ ResourceXhr.Implementation = class extends ResourceBase {
      */
 
     queryService(query) {
-        return xhr('get', this.config.path, query)
+        return xhr('get', this.config.xhr.path, query)
             .then(response => this.transformResponse(response))
             .then(entries => {
                 if (!Array.isArray(entries)) {
