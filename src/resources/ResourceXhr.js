@@ -1,5 +1,5 @@
 import ResourceBase from './ResourceBase';
-import ConfigRoot    from '../config/ConfigRoot';
+import ConfigRoot   from '../config/ConfigRoot';
 import ConfigXhr    from '../config/ConfigXhr';
 import IResource    from '../interfaces/IResource';
 
@@ -154,7 +154,7 @@ export function xhr(method, path, data) {
             switch (method) {
                 case 'get':
                 case 'delete':
-                    path += ResourceXhr.serializeQuery(data);
+                    path += serializeQuery(data);
 
                     break;
                 case 'put':

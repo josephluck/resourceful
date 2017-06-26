@@ -209,7 +209,7 @@ function xhr(method, path, data) {
         switch (method) {
             case 'get':
             case 'delete':
-                path += ResourceXhr.serializeQuery(data);
+                path += serializeQuery(data);
 
                 break;
             case 'put':
