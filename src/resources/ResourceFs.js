@@ -155,7 +155,7 @@ ResourceFs.Implementation = class extends ResourceBase {
         return Promise.resolve()
             .then(() => {
                 const filename  = this.getFilename(payload);
-                const json      = JSON.stringify(payload, null, this.config.indentation);
+                const json      = JSON.stringify(payload, null, this.config.fs.indentation);
                 const writePath = path.join(this.root, filename);
 
                 return fs.writeFile(writePath, json);

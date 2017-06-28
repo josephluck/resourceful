@@ -232,7 +232,7 @@ ResourceFs.Implementation = function (_ResourceBase) {
 
             return Promise.resolve().then(function () {
                 var filename = _this6.getFilename(payload);
-                var json = JSON.stringify(payload, null, _this6.config.indentation);
+                var json = JSON.stringify(payload, null, _this6.config.fs.indentation);
                 var writePath = _path2.default.join(_this6.root, filename);
 
                 return _fsExtra2.default.writeFile(writePath, json);
