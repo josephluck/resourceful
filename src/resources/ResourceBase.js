@@ -98,30 +98,39 @@ class ResourceBase {
     }
 
     /**
+     * @private
+     * @return {Promise}
+     */
+
+    queryService() {
+        return ResourceBase.notImplemented();
+    }
+
+    /**
      * @public
-     * @return {void}
+     * @return {Promise}
      */
 
     create() {
-        console.log('not implemented');
+        return ResourceBase.notImplemented();
     }
 
     /**
      * @public
-     * @return {void}
+     * @return {Promise}
      */
 
     update() {
-        console.log('not implemented');
+        return ResourceBase.notImplemented();
     }
 
     /**
      * @public
-     * @return {void}
+     * @return {Promise}
      */
 
     delete() {
-        console.log('not implemented');
+        return ResourceBase.notImplemented();
     }
 
     /**
@@ -454,6 +463,17 @@ class ResourceBase {
         const json = JSON.stringify(data);
 
         return type + '_' + json;
+    }
+
+    /**
+     * @static
+     * @return {Promise}
+     */
+
+    static notImplemented() {
+        return Promise.resolve().then(() => {
+            throw new Error('NOT_IMPLEMENTED');
+        });
     }
 }
 

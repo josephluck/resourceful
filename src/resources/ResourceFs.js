@@ -26,7 +26,7 @@ ResourceFs.Implementation = class extends ResourceBase {
         this.configure(config, Config);
 
         if (!config.fs.extension) {
-            throw new Error('[resource-fs] No file extension specified');
+            throw new Error('[ResourceFs] No file extension specified');
         }
 
         if (config.fs.extension.charAt(0) !== '.') {
@@ -65,7 +65,7 @@ ResourceFs.Implementation = class extends ResourceBase {
 
                 query = {name};
             } else {
-                throw new Error('[resource-fs] Files may only be queried by `name`. Please provide a name key.');
+                throw new Error('[ResourceFs] Files may only be queried by `name`. Please provide a name key.');
             }
         }
 
@@ -141,6 +141,50 @@ ResourceFs.Implementation = class extends ResourceBase {
                 });
             })
             .then(filenames => Promise.all(filenames.map(this.getFileByName.bind(this))));
+    }
+
+    /**
+     * Receives an object and writes it to the filesystem
+     * as a JSON string.
+     *
+     * @public
+     * @return {Promise}
+     */
+
+    update(payload) {
+        return Promise.resolve()
+            .then(() => {
+                const filename  = this.getFilename(payload);
+                const json      = JSON.stringify(payload, null, this.config.indentation);
+                const writePath = path.join(this.root, filename);
+
+                return fs.writeFile(writePath, json);
+            });
+    }
+
+    /**
+     * @private
+     * @param  {object} payload
+     * @return {string}
+     */
+
+    getFilename(payload) {
+        const nameKey = this.config.fs.nameKey;
+
+        let getFilename  = null;
+        let filenameBase = '';
+
+        if (typeof (filenameBase = this.config.fs.getFilename) === 'function') {
+            filenameBase = getFilename(payload);
+        } else if (nameKey) {
+            filenameBase = payload[nameKey];
+        }
+
+        if (!filenameBase || typeof filenameBase !== 'string') {
+            throw new TypeError('[ResourceFs] Invalid filename');
+        }
+
+        return filenameBase + this.config.fs.extension;
     }
 };
 
