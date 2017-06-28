@@ -226,8 +226,8 @@ ResourceFs.Implementation = function (_ResourceBase) {
          */
 
     }, {
-        key: 'update',
-        value: function update(payload) {
+        key: 'create',
+        value: function create(payload) {
             var _this6 = this;
 
             return Promise.resolve().then(function () {

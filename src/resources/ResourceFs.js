@@ -151,7 +151,7 @@ ResourceFs.Implementation = class extends ResourceBase {
      * @return {Promise}
      */
 
-    update(payload) {
+    create(payload) {
         return Promise.resolve()
             .then(() => {
                 const filename  = this.getFilename(payload);
