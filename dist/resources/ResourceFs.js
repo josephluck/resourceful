@@ -82,7 +82,7 @@ ResourceFs.Implementation = function (_ResourceBase) {
         _this3.configure(config, Config);
 
         if (!config.fs.extension) {
-            throw new Error('[resource-fs] No file extension specified');
+            throw new Error('[ResourceFs] No file extension specified');
         }
 
         if (config.fs.extension.charAt(0) !== '.') {
@@ -126,7 +126,7 @@ ResourceFs.Implementation = function (_ResourceBase) {
 
                     query = { name: name };
                 } else {
-                    throw new Error('[resource-fs] Files may only be queried by `name`. Please provide a name key.');
+                    throw new Error('[ResourceFs] Files may only be queried by `name`. Please provide a name key.');
                 }
             }
 
@@ -215,6 +215,55 @@ ResourceFs.Implementation = function (_ResourceBase) {
             }).then(function (filenames) {
                 return Promise.all(filenames.map(_this5.getFileByName.bind(_this5)));
             });
+        }
+
+        /**
+         * Receives an object and writes it to the filesystem
+         * as a JSON string.
+         *
+         * @public
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'update',
+        value: function update(payload) {
+            var _this6 = this;
+
+            return Promise.resolve().then(function () {
+                var filename = _this6.getFilename(payload);
+                var json = JSON.stringify(payload, null, _this6.config.indentation);
+                var writePath = _path2.default.join(_this6.root, filename);
+
+                return _fsExtra2.default.writeFile(writePath, json);
+            });
+        }
+
+        /**
+         * @private
+         * @param  {object} payload
+         * @return {string}
+         */
+
+    }, {
+        key: 'getFilename',
+        value: function getFilename(payload) {
+            var nameKey = this.config.fs.nameKey;
+
+            var getFilename = null;
+            var filenameBase = '';
+
+            if (typeof (filenameBase = this.config.fs.getFilename) === 'function') {
+                filenameBase = getFilename(payload);
+            } else if (nameKey) {
+                filenameBase = payload[nameKey];
+            }
+
+            if (!filenameBase || typeof filenameBase !== 'string') {
+                throw new TypeError('[ResourceFs] Invalid filename');
+            }
+
+            return filenameBase + this.config.fs.extension;
         }
     }]);
 

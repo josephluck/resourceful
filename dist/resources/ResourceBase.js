@@ -129,36 +129,47 @@ var ResourceBase = function () {
         }
 
         /**
+         * @private
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'queryService',
+        value: function queryService() {
+            return ResourceBase.notImplemented();
+        }
+
+        /**
          * @public
-         * @return {void}
+         * @return {Promise}
          */
 
     }, {
         key: 'create',
         value: function create() {
-            console.log('not implemented');
+            return ResourceBase.notImplemented();
         }
 
         /**
          * @public
-         * @return {void}
+         * @return {Promise}
          */
 
     }, {
         key: 'update',
         value: function update() {
-            console.log('not implemented');
+            return ResourceBase.notImplemented();
         }
 
         /**
          * @public
-         * @return {void}
+         * @return {Promise}
          */
 
     }, {
         key: 'delete',
         value: function _delete() {
-            console.log('not implemented');
+            return ResourceBase.notImplemented();
         }
 
         /**
@@ -521,6 +532,19 @@ var ResourceBase = function () {
             var json = JSON.stringify(data);
 
             return type + '_' + json;
+        }
+
+        /**
+         * @static
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'notImplemented',
+        value: function notImplemented() {
+            return Promise.resolve().then(function () {
+                throw new Error('NOT_IMPLEMENTED');
+            });
         }
     }]);
 
