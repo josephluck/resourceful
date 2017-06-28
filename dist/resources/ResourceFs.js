@@ -253,7 +253,7 @@ ResourceFs.Implementation = function (_ResourceBase) {
             var getFilename = null;
             var filenameBase = '';
 
-            if (typeof (filenameBase = this.config.fs.getFilename) === 'function') {
+            if (typeof (getFilename = this.config.fs.getFilename) === 'function') {
                 filenameBase = getFilename(payload);
             } else if (nameKey) {
                 filenameBase = payload[nameKey];

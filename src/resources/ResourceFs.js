@@ -174,7 +174,7 @@ ResourceFs.Implementation = class extends ResourceBase {
         let getFilename  = null;
         let filenameBase = '';
 
-        if (typeof (filenameBase = this.config.fs.getFilename) === 'function') {
+        if (typeof (getFilename = this.config.fs.getFilename) === 'function') {
             filenameBase = getFilename(payload);
         } else if (nameKey) {
             filenameBase = payload[nameKey];
