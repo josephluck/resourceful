@@ -125,16 +125,32 @@ ResourceXhr.Implementation = function (_ResourceBase) {
          * Implements the service call for this type of resource.
          *
          * @private
-         * @param   {object} query
+         * @param   {object}        query
+         * @param   {(object|null)} req
+         * @param   {(object|null)} res
          * @return  {object[]}
          */
 
     }, {
         key: 'queryService',
-        value: function queryService(query) {
+        value: function queryService(query, req, res) {
             var _this4 = this;
 
-            return xhr('get', this.config.xhr.path, query).then(function (response) {
+            return Promise.resolve().then(function () {
+                var transform = null;
+
+                if (typeof (transform = _this4.config.transform.query) === 'function') {
+                    return transform(query, req, res);
+                }
+
+                return query;
+            }).then(function (query) {
+                if (!query) {
+                    throw new TypeError('[ResourceXhr] `transform.query` function must return an object');
+                }
+
+                return xhr('get', _this4.config.xhr.path, query);
+            }).then(function (response) {
                 return _this4.transformResponse(response);
             }).then(function (entries) {
                 if (!Array.isArray(entries)) {

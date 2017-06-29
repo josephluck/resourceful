@@ -99,8 +99,10 @@ ResourceFs.Implementation = function (_ResourceBase) {
      * Implements the service call for this type of resource.
      *
      * @private
-     * @param   {object} query
-     * @return  {object[]}
+     * @param   {object}        query
+     * @param   {(object|null)} req
+     * @param   {(object|null)} res
+     * @return  {Promise.<object[]>}
      */
 
     _createClass(_class, [{
@@ -108,33 +110,46 @@ ResourceFs.Implementation = function (_ResourceBase) {
         value: function queryService() {
             var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
+            var _this4 = this;
+
+            var req = arguments[1];
+            var res = arguments[2];
+
             var nameKey = this.config.fs.nameKey;
 
-            var hasQuery = false;
-            var transform = null;
-            var name = '';
+            return Promise.resolve().then(function () {
+                var transform = null;
 
-            if (typeof (transform = this.config.transform.query) === 'function') {
-                query = transform(query);
-            }
-
-            hasQuery = Object.keys(query).length;
-
-            if (hasQuery && typeof query.name === 'undefined') {
-                if (nameKey && (name = query[nameKey])) {
-                    // Create new nameKeyed query to preserve cache keys
-
-                    query = { name: name };
-                } else {
-                    throw new Error('[ResourceFs] Files may only be queried by `name`. Please provide a name key.');
+                if (typeof (transform = _this4.config.transform.query) === 'function') {
+                    return transform(query, req, res);
                 }
-            }
 
-            if (hasQuery) {
-                return this.getFilesByName(query);
-            }
+                return query;
+            }).then(function (query) {
+                if (!query) {
+                    throw new TypeError('[ResourceFs] `transform.query` function must return an object');
+                }
 
-            return this.getAllFiles();
+                var hasQuery = Object.keys(query).length > 0;
+
+                var name = '';
+
+                if (hasQuery && typeof query.name === 'undefined') {
+                    if (nameKey && (name = query[nameKey])) {
+                        // Create new nameKeyed query to preserve cache keys
+
+                        query = { name: name };
+                    } else {
+                        throw new Error('[ResourceFs] Files may only be queried by `name`. Please provide a name key.');
+                    }
+                }
+
+                if (hasQuery) {
+                    return _this4.getFilesByName(query);
+                }
+
+                return _this4.getAllFiles();
+            });
         }
 
         /**
@@ -164,7 +179,7 @@ ResourceFs.Implementation = function (_ResourceBase) {
     }, {
         key: 'getFileByName',
         value: function getFileByName(name) {
-            var _this4 = this;
+            var _this5 = this;
 
             var extRe = new RegExp(this.config.fs.extension + '$', 'g');
 
@@ -183,11 +198,11 @@ ResourceFs.Implementation = function (_ResourceBase) {
             }).then(function (buffer) {
                 return new _File2.default(name, buffer.toString());
             }).then(function (file) {
-                if (_this4.config.fs.extension !== '.json') return file;
+                if (_this5.config.fs.extension !== '.json') return file;
 
                 return JSON.parse(file.contents);
             }).then(function (file) {
-                return _this4.transformResponse(file);
+                return _this5.transformResponse(file);
             });
         }
 
@@ -199,10 +214,10 @@ ResourceFs.Implementation = function (_ResourceBase) {
     }, {
         key: 'getAllFiles',
         value: function getAllFiles() {
-            var _this5 = this;
+            var _this6 = this;
 
             return new Promise(function (resolve, reject) {
-                _fsExtra2.default.readdir(_this5.root, function (err, list) {
+                _fsExtra2.default.readdir(_this6.root, function (err, list) {
                     return err ? reject(err) : resolve(list);
                 });
             }).then(function (list) {
@@ -210,10 +225,10 @@ ResourceFs.Implementation = function (_ResourceBase) {
                 // specified extension
 
                 return list.filter(function (fileName) {
-                    return fileName.match(/^[^.]/g) && fileName.match(new RegExp(_this5.config.fs.extension + '$', 'g'));
+                    return fileName.match(/^[^.]/g) && fileName.match(new RegExp(_this6.config.fs.extension + '$', 'g'));
                 });
             }).then(function (filenames) {
-                return Promise.all(filenames.map(_this5.getFileByName.bind(_this5)));
+                return Promise.all(filenames.map(_this6.getFileByName.bind(_this6)));
             });
         }
 
@@ -228,12 +243,12 @@ ResourceFs.Implementation = function (_ResourceBase) {
     }, {
         key: 'create',
         value: function create(payload) {
-            var _this6 = this;
+            var _this7 = this;
 
             return Promise.resolve().then(function () {
-                var filename = _this6.getFilename(payload);
-                var json = JSON.stringify(payload, null, _this6.config.fs.indentation);
-                var writePath = _path2.default.join(_this6.root, filename);
+                var filename = _this7.getFilename(payload);
+                var json = JSON.stringify(payload, null, _this7.config.fs.indentation);
+                var writePath = _path2.default.join(_this7.root, filename);
 
                 return _fsExtra2.default.writeFile(writePath, json);
             });

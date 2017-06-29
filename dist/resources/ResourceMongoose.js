@@ -85,17 +85,34 @@ ResourceMongoose.Implementation = function (_ResourceBase) {
      *
      * @private
      * @param   {object} query
+     * @param   {(object|null)} req
+     * @param   {(object|null)} res
      * @return  {object[]}
      */
 
     _createClass(_class, [{
         key: 'queryService',
         value: function queryService() {
-            var _this4 = this;
-
             var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
+            var _this4 = this;
+
+            var req = arguments[1];
+            var res = arguments[2];
+
             return Promise.resolve().then(function () {
+                var transform = null;
+
+                if (typeof (transform = _this4.config.transform.query) === 'function') {
+                    return transform(query, req, res);
+                }
+
+                return query;
+            }).then(function (query) {
+                if (!query) {
+                    throw new TypeError('[ResourceMongoose] `transform.query` function must return an object');
+                }
+
                 var dbQuery = constructMongoQuery(query);
 
                 var $page = 1;

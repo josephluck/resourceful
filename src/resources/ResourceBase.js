@@ -18,11 +18,13 @@ class ResourceBase {
      * @param   {object}    query
      * @param   {object}    [req=null]
      *     An optional object representing the request (i.e. ExpressRequest)
+     * @param   {object}    [res=null]
+     *     An optional object representing the response (i.e. ExpressResponse)
      * @return  {Promise.<object>}
      */
 
-    getOne(query, req=null) {
-        return this.get(query, req)
+    getOne(query, req=null, res=null) {
+        return this.get(query, req, res)
             .then(entries => {
                 return entries[0] || null;
             });
@@ -36,12 +38,13 @@ class ResourceBase {
      * @public
      * @param   {object}    query
      * @param   {object}    [req=null]
-     *     An optional object containing data about the request
-     *     (i.e. ExpressRequest)
+     *     An optional object representing the request (i.e. ExpressRequest)
+     * @param   {object}    [res=null]
+     *     An optional object representing the response (i.e. ExpressResponse)
      * @return  {Promise.<object[]>}
      */
 
-    get(query={}, req=null) {
+    get(query={}, req=null, res=null) {
         const requestId = ResourceBase.getRequestId('get', query);
 
         let activeRequestPromise = null;
@@ -75,7 +78,7 @@ class ResourceBase {
                         return this.config.data.init;
                     }
 
-                    return this.queryService(query);
+                    return this.queryService(query, req, res);
                 })
                 .then(entries => {
                     this.hasInitialized = true;
@@ -86,7 +89,7 @@ class ResourceBase {
                         entries = this.readFromCache(query);
                     }
 
-                    return Promise.all(entries.map(entry => this.transformEntry(entry, req)));
+                    return Promise.all(entries.map(entry => this.transformEntry(entry, req, res)));
                 })
                 .then(entries => {
                     delete this.activeRequests[requestId];

@@ -73,12 +73,30 @@ ResourceXhr.Implementation = class extends ResourceBase {
      * Implements the service call for this type of resource.
      *
      * @private
-     * @param   {object} query
+     * @param   {object}        query
+     * @param   {(object|null)} req
+     * @param   {(object|null)} res
      * @return  {object[]}
      */
 
-    queryService(query) {
-        return xhr('get', this.config.xhr.path, query)
+    queryService(query, req, res) {
+        return Promise.resolve()
+            .then(() => {
+                let transform = null;
+
+                if (typeof (transform = this.config.transform.query) === 'function') {
+                    return transform(query, req, res);
+                }
+
+                return query;
+            })
+            .then(query => {
+                if (!query) {
+                    throw new TypeError('[ResourceXhr] `transform.query` function must return an object');
+                }
+
+                return xhr('get', this.config.xhr.path, query);
+            })
             .then(response => this.transformResponse(response))
             .then(entries => {
                 if (!Array.isArray(entries)) {

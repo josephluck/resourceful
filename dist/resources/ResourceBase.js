@@ -43,6 +43,8 @@ var ResourceBase = function () {
      * @param   {object}    query
      * @param   {object}    [req=null]
      *     An optional object representing the request (i.e. ExpressRequest)
+     * @param   {object}    [res=null]
+     *     An optional object representing the response (i.e. ExpressResponse)
      * @return  {Promise.<object>}
      */
 
@@ -50,8 +52,9 @@ var ResourceBase = function () {
         key: 'getOne',
         value: function getOne(query) {
             var req = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var res = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
-            return this.get(query, req).then(function (entries) {
+            return this.get(query, req, res).then(function (entries) {
                 return entries[0] || null;
             });
         }
@@ -64,18 +67,21 @@ var ResourceBase = function () {
          * @public
          * @param   {object}    query
          * @param   {object}    [req=null]
-         *     An optional object containing data about the request
-         *     (i.e. ExpressRequest)
+         *     An optional object representing the request (i.e. ExpressRequest)
+         * @param   {object}    [res=null]
+         *     An optional object representing the response (i.e. ExpressResponse)
          * @return  {Promise.<object[]>}
          */
 
     }, {
         key: 'get',
         value: function get() {
+            var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
             var _this = this;
 
-            var query = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
             var req = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var res = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
             var requestId = ResourceBase.getRequestId('get', query);
 
@@ -108,7 +114,7 @@ var ResourceBase = function () {
                     return _this.config.data.init;
                 }
 
-                return _this.queryService(query);
+                return _this.queryService(query, req, res);
             }).then(function (entries) {
                 _this.hasInitialized = true;
 
@@ -119,7 +125,7 @@ var ResourceBase = function () {
                 }
 
                 return Promise.all(entries.map(function (entry) {
-                    return _this.transformEntry(entry, req);
+                    return _this.transformEntry(entry, req, res);
                 }));
             }).then(function (entries) {
                 delete _this.activeRequests[requestId];

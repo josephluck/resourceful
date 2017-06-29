@@ -42,38 +42,50 @@ ResourceFs.Implementation = class extends ResourceBase {
      * Implements the service call for this type of resource.
      *
      * @private
-     * @param   {object} query
-     * @return  {object[]}
+     * @param   {object}        query
+     * @param   {(object|null)} req
+     * @param   {(object|null)} res
+     * @return  {Promise.<object[]>}
      */
 
-    queryService(query={}) {
+    queryService(query={}, req, res) {
         const nameKey = this.config.fs.nameKey;
 
-        let hasQuery  = false;
-        let transform = null;
-        let name      = '';
+        return Promise.resolve()
+            .then(() => {
+                let transform = null;
 
-        if (typeof (transform = this.config.transform.query) === 'function') {
-            query = transform(query);
-        }
+                if (typeof (transform = this.config.transform.query) === 'function') {
+                    return transform(query, req, res);
+                }
 
-        hasQuery = Object.keys(query).length;
+                return query;
+            })
+            .then(query => {
+                if (!query) {
+                    throw new TypeError('[ResourceFs] `transform.query` function must return an object');
+                }
 
-        if (hasQuery && typeof query.name === 'undefined') {
-            if (nameKey && (name = query[nameKey])) {
-                // Create new nameKeyed query to preserve cache keys
+                const hasQuery = Object.keys(query).length > 0;
 
-                query = {name};
-            } else {
-                throw new Error('[ResourceFs] Files may only be queried by `name`. Please provide a name key.');
-            }
-        }
+                let name = '';
 
-        if (hasQuery) {
-            return this.getFilesByName(query);
-        }
+                if (hasQuery && typeof query.name === 'undefined') {
+                    if (nameKey && (name = query[nameKey])) {
+                        // Create new nameKeyed query to preserve cache keys
 
-        return this.getAllFiles();
+                        query = {name};
+                    } else {
+                        throw new Error('[ResourceFs] Files may only be queried by `name`. Please provide a name key.');
+                    }
+                }
+
+                if (hasQuery) {
+                    return this.getFilesByName(query);
+                }
+
+                return this.getAllFiles();
+            });
     }
 
     /**

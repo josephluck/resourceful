@@ -33,12 +33,27 @@ ResourceMongoose.Implementation = class extends ResourceBase {
      *
      * @private
      * @param   {object} query
+     * @param   {(object|null)} req
+     * @param   {(object|null)} res
      * @return  {object[]}
      */
 
-    queryService(query={}) {
+    queryService(query={}, req, res) {
         return Promise.resolve()
             .then(() => {
+                let transform = null;
+
+                if (typeof (transform = this.config.transform.query) === 'function') {
+                    return transform(query, req, res);
+                }
+
+                return query;
+            })
+            .then(query => {
+                if (!query) {
+                    throw new TypeError('[ResourceMongoose] `transform.query` function must return an object');
+                }
+
                 const dbQuery = constructMongoQuery(query);
 
                 let $page   = 1;
