@@ -185,9 +185,6 @@ function transformDocumentToPlainObject(document) {
         virtuals: true
     });
 
-    delete obj._id;
-    delete obj.__v;
-
     stripMongoCruft(obj);
 
     return obj;
@@ -201,6 +198,9 @@ function transformDocumentToPlainObject(document) {
  */
 
 function stripMongoCruft(obj) {
+    delete obj._id;
+    delete obj.__v;
+
     for (let key in obj) {
         const value = obj[key];
 
