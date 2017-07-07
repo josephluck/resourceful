@@ -273,5 +273,7 @@ function xhr(method, path, data) {
     });
 }
 
+ResourceXhr.xhr = xhr;
+
 exports.default = ResourceXhr;
 //# sourceMappingURL=ResourceXhr.js.map

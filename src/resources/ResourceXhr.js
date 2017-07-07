@@ -221,4 +221,6 @@ export function xhr(method, path, data) {
         });
 }
 
+ResourceXhr.xhr = xhr;
+
 export default ResourceXhr;
