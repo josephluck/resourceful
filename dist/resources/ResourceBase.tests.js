@@ -1,5 +1,7 @@
 'use strict';
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /* eslint-disable no-magic-numbers */
+
 var _chai = require('chai');
 
 var _chai2 = _interopRequireDefault(_chai);
@@ -22,7 +24,7 @@ var _ResourceBase2 = _interopRequireDefault(_ResourceBase);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_chai2.default.use(_chaiShallowDeepEqual2.default); /* eslint-disable no-magic-numbers */
+_chai2.default.use(_chaiShallowDeepEqual2.default);
 
 describe('ResourceBase', function () {
     var resource = new _ResourceBase2.default();
@@ -106,6 +108,27 @@ describe('ResourceBase', function () {
         });
 
         _chai2.default.assert.equal(resource.cache.role.Developer.$$store$$, null);
+    });
+
+    it('should receive init data', function () {
+        var resource = new _ResourceBase2.default();
+
+        resource.configure({
+            data: {
+                init: [{
+                    id: 1,
+                    foo: null
+                }]
+            }
+        });
+
+        return resource.get().then(function (_ref) {
+            var _ref2 = _slicedToArray(_ref, 1),
+                entry = _ref2[0];
+
+            _chai2.default.assert.equal(entry.id, 1);
+            _chai2.default.assert.equal(entry.foo, null);
+        });
     });
 });
 //# sourceMappingURL=ResourceBase.tests.js.map

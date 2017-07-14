@@ -51,7 +51,7 @@ var Util = function () {
 
                 if (typeof descriptor.get === 'function' && !descriptor.enumerable) continue;
 
-                if (!deep || _typeof(source[key]) !== 'object') {
+                if (!deep || _typeof(source[key]) !== 'object' || source[key] === null) {
                     // All non-object primitives, or all properties if
                     // shallow extend
 

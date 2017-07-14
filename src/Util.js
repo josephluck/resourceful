@@ -30,7 +30,7 @@ class Util {
 
             if (typeof descriptor.get === 'function' && !descriptor.enumerable) continue;
 
-            if (!deep || typeof source[key] !== 'object') {
+            if (!deep || typeof source[key] !== 'object' || source[key] === null) {
                 // All non-object primitives, or all properties if
                 // shallow extend
 

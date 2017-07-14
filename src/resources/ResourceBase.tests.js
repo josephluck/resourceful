@@ -96,4 +96,23 @@ describe('ResourceBase', function() {
 
         chai.assert.equal(resource.cache.role.Developer.$$store$$, null);
     });
+
+    it('should receive init data', function() {
+        const resource = new ResourceBase();
+
+        resource.configure({
+            data: {
+                init: [{
+                    id: 1,
+                    foo: null
+                }]
+            }
+        });
+
+        return resource.get()
+            .then(([entry]) => {
+                chai.assert.equal(entry.id, 1);
+                chai.assert.equal(entry.foo, null);
+            });
+    });
 });
