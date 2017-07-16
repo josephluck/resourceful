@@ -270,16 +270,20 @@ function stripMongoCruft(obj) {
     delete obj._id;
     delete obj.__v;
 
+    if (obj._bsontype) {
+        throw obj;
+    }
+
     for (var key in obj) {
         var value = obj[key];
 
         if (!value) continue;
 
-        if (value instanceof ObjectId) {
+        if (value instanceof ObjectId || value._bsontype) {
             obj[key] = value.toString();
         } else if (value instanceof Date) {
             obj[key] = value.toISOString();
-        } else if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
+        } else if (value && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
             stripMongoCruft(value);
         }
     }
