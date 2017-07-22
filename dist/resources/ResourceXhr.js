@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 exports.serializeQuery = serializeQuery;
@@ -168,6 +170,8 @@ ResourceXhr.Implementation = function (_ResourceBase) {
 /**
  * Takes a query object and returns a serialized query string.
  * Handles arrays by adding multiple occurences of the same key.
+ * Handles objects by adding square brackets on each side (allows one
+ * level of nesting). Could be refactored to use recursion.
  *
  * @static
  * @public
@@ -180,19 +184,27 @@ function serializeQuery(query) {
 
     var queryString = '';
 
-    for (var prop in query) {
-        var value = query[prop];
+    for (var key in query) {
+        var value = query[key];
 
         // Convert all query parameters to 'snake_case'
 
-        prop = prop.replace(/([A-Z])/g, '_$1').replace(/^_/, '').toLowerCase();
+        key = encodeSnakeCaseUriComponent(key);
 
         if (Array.isArray(value)) {
             for (var i = 0, item; item = value[i]; i++) {
-                queries.push(encodeURIComponent(prop) + '=' + encodeURIComponent(item));
+                queries.push(key + '=' + encodeURIComponent(item));
+            }
+        } else if (value && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
+            for (var subKey in value) {
+                var subValue = value[subKey];
+
+                subKey = encodeSnakeCaseUriComponent(subKey);
+
+                queries.push(key + '[' + subKey + ']=' + encodeURIComponent(subValue));
             }
         } else {
-            queries.push(encodeURIComponent(prop) + '=' + encodeURIComponent(value));
+            queries.push(key + '=' + encodeURIComponent(value));
         }
     }
 
@@ -271,6 +283,17 @@ function xhr(method, path, data) {
 
         return response;
     });
+}
+
+/**
+ * @private
+ * @static
+ * @param  {string} input
+ * @return {string}
+ */
+
+function encodeSnakeCaseUriComponent(input) {
+    return encodeURIComponent(input).replace(/([A-Z])/g, '_$1').replace(/^_/, '').toLowerCase();
 }
 
 ResourceXhr.xhr = xhr;

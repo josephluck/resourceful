@@ -112,6 +112,8 @@ ResourceXhr.Implementation = class extends ResourceBase {
 /**
  * Takes a query object and returns a serialized query string.
  * Handles arrays by adding multiple occurences of the same key.
+ * Handles objects by adding square brackets on each side (allows one
+ * level of nesting). Could be refactored to use recursion.
  *
  * @static
  * @public
@@ -124,21 +126,27 @@ export function serializeQuery(query) {
 
     let queryString = '';
 
-    for (let prop in query) {
-        let value = query[prop];
+    for (let key in query) {
+        const value = query[key];
 
         // Convert all query parameters to 'snake_case'
 
-        prop = prop
-            .replace(/([A-Z])/g, '_$1').replace(/^_/, '')
-            .toLowerCase();
+        key = encodeSnakeCaseUriComponent(key);
 
         if (Array.isArray(value)) {
             for (let i = 0, item; (item = value[i]); i++) {
-                queries.push(encodeURIComponent(prop) + '=' + encodeURIComponent(item));
+                queries.push(key + '=' + encodeURIComponent(item));
+            }
+        } else if (value && typeof value === 'object') {
+            for (let subKey in value) {
+                const subValue = value[subKey];
+
+                subKey = encodeSnakeCaseUriComponent(subKey);
+
+                queries.push(key + '[' + subKey + ']=' + encodeURIComponent(subValue));
             }
         } else {
-            queries.push(encodeURIComponent(prop) + '=' + encodeURIComponent(value));
+            queries.push(key + '=' + encodeURIComponent(value));
         }
     }
 
@@ -219,6 +227,20 @@ export function xhr(method, path, data) {
 
             return response;
         });
+}
+
+/**
+ * @private
+ * @static
+ * @param  {string} input
+ * @return {string}
+ */
+
+function encodeSnakeCaseUriComponent(input) {
+    return encodeURIComponent(input)
+        .replace(/([A-Z])/g, '_$1')
+        .replace(/^_/, '')
+        .toLowerCase();
 }
 
 ResourceXhr.xhr = xhr;
