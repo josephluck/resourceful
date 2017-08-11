@@ -12,7 +12,7 @@ Resourceful allows you to create individual "resource" instances, each one provi
 - [Integrations](#integrations)
 - [API](#api)
 - [Instantiation](#instantiation)
-- [Custom Data Models](#custom-data-models)
+- [Configuration](#configuration)
 
 ## Integrations
 
@@ -177,6 +177,25 @@ Config {
 }
 ```
 
+A resource can be configured by passing zero more configuration options as follows, with all options falling back to the defaults shown above if not specified.
+
+```js
+const people = new ResourceMongoose({
+    xhr: {
+        path: '/api/v2.0/people/'
+    },
+    cache: {
+        primaryKey: 'id'  
+    },
+    transform: {
+        response: response => response.items,
+        error: response => response.errors
+    }
+});
+```
+
+Each option is described in detail below.
+
 ### cache
 
 A collection of options relating to a resource's internal cache.
@@ -237,17 +256,15 @@ A function allowing transformation of the provided query before it hits the inte
 
 - `response`
 
-A function allowing transformation of integration's response, before it is written to cache and returned by the resource.
+A function allowing transformation of an integration's response, before it is written to cache and returned by the resource.
 
 - `entry`
 
-A function allowing transformation of a returned entry, after it has been cached, but before it is returned by the resource.
+A function allowing transformation of an entry, after it has been cached, but before it is returned by the resource.
 
 - `error`
 
-A function allowing transformation of an arbitrary response (e.g. JSON over an API), into an array of one or more errors.
-
-## Custom Data Models
+A function allowing transformation of an integration's error response (e.g. an API's `500` status), into an array or one or more errors to be passed back to the consumer.
 
 ---
 *&copy; 2017 Patrick Kunka / KunkaLabs Ltd*
