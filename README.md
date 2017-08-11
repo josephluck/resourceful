@@ -177,7 +177,7 @@ Config {
 }
 ```
 
-A resource can be configured by passing zero more configuration options as follows, with all options falling back to the defaults shown above if not specified.
+A resource can be configured by passing zero or more configuration options as follows, with all options falling back to the defaults shown above if not specified.
 
 ```js
 const people = new ResourceXhr({
