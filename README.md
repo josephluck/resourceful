@@ -58,7 +58,7 @@ Returns a Promise resolving with a list of entries matching the provided query.
 | param  | `object` | query | A query object containing one or more key value pairs
 | param  | `object` | [req] | An optional request object to passed to the underlying implementation (e.g. for authentication)
 | param  | `object` | [res] | An optional response object to be passed to the underlying implementation (e.g. for authentication)
-| return | `Promise.<Array.<(object|null)>>` | An entry matching the query or null
+| return | `Promise.<Array.<(object&brvbar;null)>>` | An entry matching the query or null
   
 Returns a Promise resolving with a single entry matching the provided query, or `null` if none found. This is a shorthand for `.get()[0]`, and can be used when querying by a unique ID.
 
