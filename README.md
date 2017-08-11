@@ -254,17 +254,33 @@ All functions receive the relevant object as their parameter, and must return an
 
 A function allowing transformation of the provided query before it hits the integration.
 
+|Type | Default
+|---  | ---
+|`function`| `null`
+
 - `response`
 
 A function allowing transformation of an integration's response, before it is written to cache and returned by the resource.
+
+|Type | Default
+|---  | ---
+|`function`| `null`
 
 - `entry`
 
 A function allowing transformation of an entry, after it has been cached, but before it is returned by the resource.
 
+|Type | Default
+|---  | ---
+|`function`| `null`
+
 - `error`
 
 A function allowing transformation of an integration's error response (e.g. an API's `500` status), into an array or one or more errors to be passed back to the consumer.
+
+|Type | Default
+|---  | ---
+|`function`| `null`
 
 ---
 *&copy; 2017 Patrick Kunka / KunkaLabs Ltd*
