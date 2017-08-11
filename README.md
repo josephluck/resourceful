@@ -4,7 +4,7 @@ A promised-based interface for isomoprhic resources with built-in caching.
 
 ## Overview
 
-Resourceful implements a simple respository interface for querying data in universal code. Implementation details are abstracted away from the comsumer so that the appropriate type of resource (e.g. XHR, DB, FS) may be injected into an arbitrary universal module (typically something that depends on the same data model on both the client and server) without affecting integration code.
+Resourceful implements a simple respository interface for querying data in universal code. Implementation details are abstracted away from the comsumer so that the appropriate type of resource (e.g. XHR, DB, FS) may be injected into an arbitrary universal code (typically something that depends on the same data model on both the client and server) without affecting integration code.
 
 Resourceful allows you to create individual "resource" instances, each one providing a common promise-based-interface for a particular data type and source.
 
