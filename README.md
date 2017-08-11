@@ -8,6 +8,14 @@ Resourceful implements a simple respository interface for querying data in unive
 
 Resourceful allows you to create individual "resource" instances, each one providing a common promise-based-interface for a particular data type and source.
 
+#### Contents
+- [Integrations](#integrations)
+- [API](#api)
+- [Instantiation](#instantiation)
+- [Caching](#caching)
+
+## Integrations
+
 Currently, the following integrations exist:
 
 #### ResourceXHR
@@ -63,6 +71,13 @@ The `IResource` interface implements the following API methods, which all resour
 
 `.flushCache()`
 
+## Instantiation
+
+Todo
+
+## Caching
+
+Todo
 
 ---
 *&copy; 2017 Patrick Kunka / KunkaLabs Ltd*
