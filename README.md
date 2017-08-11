@@ -42,10 +42,10 @@ The `IResource` interface implements the following API methods, which all resour
 
 |        | Type   | Name  | Description
 |--------|--------|-------|-------------
-| param  | object | query | A query object containing one or more key value pairs
-| param  | object | [req] | An optional request object to passed to the underlying implementation (e.g. for authentication)
-| param  | object | [res] | An optional response object to be passed to the underlying implementation (e.g. for authentication)
-| return | Promise.<Array.<object>> | A list of entries matching the query
+| param  | `object` | query | A query object containing one or more key value pairs
+| param  | `object` | [req] | An optional request object to passed to the underlying implementation (e.g. for authentication)
+| param  | `object` | [res] | An optional response object to be passed to the underlying implementation (e.g. for authentication)
+| return | `Promise.<Array.<object>>` | A list of entries matching the query
   
 Returns a Promise resolving with a list of entries matching the provided query.
 
@@ -55,10 +55,10 @@ Returns a Promise resolving with a list of entries matching the provided query.
 
 |        | Type   | Name  | Description
 |--------|--------|-------|-------------
-| param  | object | query | A query object containing one or more key value pairs
-| param  | object | [req] | An optional request object to passed to the underlying implementation (e.g. for authentication)
-| param  | object | [res] | An optional response object to be passed to the underlying implementation (e.g. for authentication)
-| return | Promise.<Array.<(object|null)>> | An entry matching the query or null
+| param  | `object` | query | A query object containing one or more key value pairs
+| param  | `object` | [req] | An optional request object to passed to the underlying implementation (e.g. for authentication)
+| param  | `object` | [res] | An optional response object to be passed to the underlying implementation (e.g. for authentication)
+| return | `Promise.<Array.<(object|null)>>` | An entry matching the query or null
   
 Returns a Promise resolving with a single entry matching the provided query, or `null` if none found. This is a shorthand for `.get()[0]`, and can be used when querying by a unique ID.
 
@@ -68,8 +68,8 @@ Returns a Promise resolving with a single entry matching the provided query, or 
 
 |        | Type   | Name  | Description
 |--------|--------|-------|-------------
-| param  | object | payload | An object containing the data to be created
-| return | Promise.<object> | The newly created item
+| param  | `object` | payload | An object containing the data to be created
+| return | `Promise.<object>` | The newly created item
   
 Creates an entry and returns a promise resolving with that new entry on success.
 
@@ -79,9 +79,9 @@ Creates an entry and returns a promise resolving with that new entry on success.
 
 |        | Type   | Name  | Description
 |--------|--------|-------|-------------
-| param  | object | query | A query object typically containing a single key value pair to match an item's unique ID
-| param  | object | payload | An object containing the data to be created
-| return | Promise.<object> | The newly created item
+| param  | `object` | query | A query object typically containing a single key value pair to match an item's unique ID
+| param  | `object` | payload | An object containing the data to be created
+| return | `Promise.<object>` | The newly created item
 
 Updates an existing entry (by query) and returns a promise resolving with that updated entry on success.
 
@@ -91,8 +91,8 @@ Updates an existing entry (by query) and returns a promise resolving with that u
 
 |        | Type   | Name  | Description
 |--------|--------|-------|-------------
-| param  | object | query | A query object typically containing a single key value pair to match an item's unique ID
-| return | Promise.<object> | The deleted item
+| param  | `object` | query | A query object typically containing a single key value pair to match an item's unique ID
+| return | `Promise.<object>` | The deleted item
 
 Deletes an existing entry (by query) and returns a promise resolving with that deleted entry on success.
 
@@ -102,8 +102,8 @@ Deletes an existing entry (by query) and returns a promise resolving with that d
 
 |        | Type   | Name  | Description
 |--------|--------|-------|-------------
-| param  | object | query | A query object containing one or more key value pairs
-| return | void   |
+| param  | `object` | query | A query object containing one or more key value pairs
+| return | `void`   |
 
 Deletes one or more entries from the cache matching the provided query.
 
@@ -113,7 +113,7 @@ Deletes one or more entries from the cache matching the provided query.
 
 |        | Type   | Name  | Description
 |--------|--------|-------|-------------
-| return | void   |
+| return | `void`  |
 
 Deletes the resource's entire cache
 
