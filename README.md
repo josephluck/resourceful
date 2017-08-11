@@ -113,7 +113,7 @@ Deletes one or more entries from the cache matching the provided query.
 
 |        | Type   | Name  | Description
 |--------|--------|-------|-------------
-| return | `void`  |
+| return | `void` |
 
 Deletes the resource's entire cache
 
@@ -180,7 +180,7 @@ Config {
 A resource can be configured by passing zero more configuration options as follows, with all options falling back to the defaults shown above if not specified.
 
 ```js
-const people = new ResourceMongoose({
+const people = new ResourceXhr({
     xhr: {
         path: '/api/v2.0/people/'
     },
@@ -195,6 +195,8 @@ const people = new ResourceMongoose({
 ```
 
 Each option is described in detail below.
+
+NB: the `xhr` configuration options shown in the above example are specific to the `ResourceXHR` type and are therefore not described below but covered in the relevent document.
 
 ### cache
 
