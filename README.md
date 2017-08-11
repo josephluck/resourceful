@@ -120,9 +120,9 @@ Deletes the resource's entire cache
 
 ## Instantiation
 
-Each resource type follows the same basic pattern for instantiation, although specific instantiation instructions and configuration objects for each resource type can be found as links in the [Integrations](#integrations) section above.
+Each resource type follows the same basic pattern for instantiation.
 
-A typical resource file might look like the following:
+A typical client-side resource file might look like the following:
 
 #### ./resources/client/people.js
 
@@ -149,6 +149,14 @@ const people = new ResourceMongoose({
 
 export default people;
 ```
+
+As above, it is very common for resources to be defined in pairs, so that appropriate resource can be easily injected into code universal regardless of its type, and will yield identical results.
+
+The only difference in the above two options would be the configuration.
+
+## Configuration
+
+All resource types implement various common configuration options, as well as implementation specific configuration options which are linked to in the [Integrations](#integrations) section above.
 
 ## Caching
 
