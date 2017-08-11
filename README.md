@@ -12,7 +12,6 @@ Resourceful allows you to create individual "resource" instances, each one provi
 - [Integrations](#integrations)
 - [API](#api)
 - [Instantiation](#instantiation)
-- [Caching](#caching)
 - [Custom Data Models](#custom-data-models)
 
 ## Integrations
@@ -46,9 +45,9 @@ The `IResource` interface implements the following API methods, which all resour
 | param  | object | query | A query object containing one or more key value pairs
 | param  | object | [req] | An optional request object to passed to the underlying implementation (e.g. for authentication)
 | param  | object | [res] | An optional response object to be passed to the underlying implementation (e.g. for authentication)
-| return | Promise.<Array.<object>> | A list of items matching the query
+| return | Promise.<Array.<object>> | A list of entries matching the query
   
-Returns a Promise resolving with a list of items matching the provided query.
+Returns a Promise resolving with a list of entries matching the provided query.
 
 ### .getOne()
 
@@ -59,9 +58,9 @@ Returns a Promise resolving with a list of items matching the provided query.
 | param  | object | query | A query object containing one or more key value pairs
 | param  | object | [req] | An optional request object to passed to the underlying implementation (e.g. for authentication)
 | param  | object | [res] | An optional response object to be passed to the underlying implementation (e.g. for authentication)
-| return | Promise.<Array.<(object|null)>> | An item matching the query or null
+| return | Promise.<Array.<(object|null)>> | An entry matching the query or null
   
-Returns a Promise resolving with a single item matching the provided query, or `null` if none found. This is a shorthand for `.get()[0]`, and can be used when querying by a unique ID.
+Returns a Promise resolving with a single entry matching the provided query, or `null` if none found. This is a shorthand for `.get()[0]`, and can be used when querying by a unique ID.
 
 ### .create()
 
@@ -72,7 +71,7 @@ Returns a Promise resolving with a single item matching the provided query, or `
 | param  | object | payload | An object containing the data to be created
 | return | Promise.<object> | The newly created item
   
-Creates an item and returns a promise resolving with that new item on success.
+Creates an entry and returns a promise resolving with that new entry on success.
 
 ### .update()
 
@@ -84,7 +83,7 @@ Creates an item and returns a promise resolving with that new item on success.
 | param  | object | payload | An object containing the data to be created
 | return | Promise.<object> | The newly created item
 
-Updates an existing item (by query) and returns a promise resolving with that updated item on success.
+Updates an existing entry (by query) and returns a promise resolving with that updated entry on success.
 
 ### .delete()
 
@@ -95,7 +94,7 @@ Updates an existing item (by query) and returns a promise resolving with that up
 | param  | object | query | A query object typically containing a single key value pair to match an item's unique ID
 | return | Promise.<object> | The deleted item
 
-Deletes an existing item (by query) and returns a promise resolving with that deleted item on success.
+Deletes an existing entry (by query) and returns a promise resolving with that deleted entry on success.
 
 ### .flushCacheStore()
 
@@ -106,7 +105,7 @@ Deletes an existing item (by query) and returns a promise resolving with that de
 | param  | object | query | A query object containing one or more key value pairs
 | return | void   |
 
-Deletes one or more items from the cache matching the provided query.
+Deletes one or more entries from the cache matching the provided query.
 
 ### .flushCache()
 
@@ -150,17 +149,103 @@ const people = new ResourceMongoose({
 export default people;
 ```
 
-As above, it is very common for resources to be defined in pairs, so that appropriate resource can be easily injected into code universal regardless of its type, and will yield identical results.
+As above, it is very common for resources to be defined in pairs, so that the appropriate resource can be easily injected into universal code regardless of its type, and will yield identical results when called.
 
 The only difference in the above two options would be the configuration.
 
 ## Configuration
 
-All resource types implement various common configuration options, as well as implementation specific configuration options which are linked to in the [Integrations](#integrations) section above.
+All resource types implement the common configuration options shown below. In addition to these, implementation specific configuration options exist for each type of integration. These can be found in the integration specific documentation which is linked to in the [Integrations](#integrations) section above.
 
-## Caching
+```
+Config {
+   cache: {
+       enable: true,
+       primaryKey: '',
+       secondaryKeys: []
+   },
+   data: {
+       init: null,
+       Model: null
+   },
+   transform: {
+       query: null,
+       response: null,
+       entry: null,
+       error: null
+   }
+}
+```
 
-Todo
+### cache
+
+A collection of options relating to a resource's internal cache.
+
+- `enable`
+
+A boolean dictating whether or not caching should be enabled for the resource.
+
+|Type | Default
+|---  | ---
+|`boolean`| `true`
+
+- `primaryKey`
+
+An optional unique primary key present in all items to cache by. When a list of matching entries is returned by a non unique query, each one may then be cached individually by a unique ID for fast lookup at a later time.
+
+|Type | Default
+|---  | ---
+|`string`| `''`
+
+- `secondaryKeys`
+
+As above, but allows multiple secondary keys to be specified.
+
+|Type | Default
+|---  | ---
+|`Array.<string>`| `[]`
+
+### data
+
+A collection of options relating to data contained by the resource.
+
+- `init`
+
+An optional array of entries or "init data" to be provided to the resource on instantiation, matching the expected first request to the resource. This can be useful in a client side resource, where its first query may be to fetch something that is already available (for example, via a server-rendered document), and thus prevents an uneccessary API call.
+
+|Type | Default
+|---  | ---
+|`Array.<object>`| `[]`
+
+- `Model`
+
+An optional class or constructor function used to coerce data into a custom model before being returned to the consumer. When provided, data is still cached in its raw form, and coerced only upon request. This is particularly useful when virtual properties are needed on an object (e.g. a `fullName`, property combining `firstName` and `lastName`).
+
+|Type | Default
+|---  | ---
+|`function`| `null`
+
+### transform
+
+A collection of optional data transform functions. Functions may be syncronous, or promise-returning asyncronous functions, allowing for the plugging in of calls to other resources in order to map in additional data to an object before being returned to the consumer.
+
+All functions receive the relevant object as their parameter, and must return an equivalent object, or a Promise resolving with that object.
+
+- `query`
+
+A function allowing transformation of the provided query before it hits the integration.
+
+- `response`
+
+A function allowing transformation of integration's response, before it is written to cache and returned by the resource.
+
+- `entry`
+
+A function allowing transformation of a returned entry, after it has been cached, but before it is returned by the resource.
+
+- `error`
+
+A function allowing transformation of an arbitrary response (e.g. JSON over an API), into an array of one or more errors.
 
 ## Custom Data Models
 
