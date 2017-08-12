@@ -17,9 +17,9 @@ class ResourceBase {
      * @public
      * @param   {object}    query
      * @param   {object}    [req=null]
-     *     An optional object representing the request (i.e. ExpressRequest)
+     *     An optional object representing the request (i.e. http.IncomingMessage)
      * @param   {object}    [res=null]
-     *     An optional object representing the response (i.e. ExpressResponse)
+     *     An optional object representing the response (i.e. http.ServerResponse)
      * @return  {Promise.<object>}
      */
 
@@ -38,9 +38,9 @@ class ResourceBase {
      * @public
      * @param   {object}    query
      * @param   {object}    [req=null]
-     *     An optional object representing the request (i.e. ExpressRequest)
+     *     An optional object representing the request (i.e. http.IncomingMessage)
      * @param   {object}    [res=null]
-     *     An optional object representing the response (i.e. ExpressResponse)
+     *     An optional object representing the response (i.e. http.ServerResponse)
      * @return  {Promise.<object[]>}
      */
 
@@ -327,7 +327,9 @@ class ResourceBase {
 
         query = query || {};
 
-        queryKeys = Object.keys(query);
+        // Sort keys to make sure identical queries share the same cache store
+
+        queryKeys = Object.keys(query).sort();
 
         keyCache = this.cache;
 
