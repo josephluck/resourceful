@@ -151,7 +151,7 @@ ResourceXhr.Implementation = function (_ResourceBase) {
                     throw new TypeError('[ResourceXhr] `transform.query` function must return an object');
                 }
 
-                return xhr('get', _this4.config.xhr.path, query);
+                return xhr('get', _this4.config.xhr.path, query, _this4.config.xhr.timeout);
             }).then(function (response) {
                 return _this4.transformResponse(response);
             }).then(function (entries) {
@@ -227,6 +227,8 @@ function serializeQuery(query) {
  */
 
 function xhr(method, path, data) {
+    var timeout = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10000;
+
     var request = new window.XMLHttpRequest();
     var CODE_CLIENT_ERROR = 400;
     var CODE_SERVER_ERROR = 500;
@@ -255,7 +257,7 @@ function xhr(method, path, data) {
             request.setRequestHeader('Content-Type', 'application/json');
         }
 
-        request.timeout = 60000;
+        request.timeout = timeout;
 
         return new Promise(function (resolve, reject) {
             request.onload = resolve;

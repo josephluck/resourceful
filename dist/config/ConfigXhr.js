@@ -10,6 +10,7 @@ var ConfigXhr = function ConfigXhr() {
     _classCallCheck(this, ConfigXhr);
 
     this.path = '';
+    this.timeout = 10000;
 
     Object.seal(this);
 };
