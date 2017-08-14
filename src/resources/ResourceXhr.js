@@ -95,7 +95,7 @@ ResourceXhr.Implementation = class extends ResourceBase {
                     throw new TypeError('[ResourceXhr] `transform.query` function must return an object');
                 }
 
-                return xhr('get', this.config.xhr.path, query);
+                return xhr('get', this.config.xhr.path, query, this.config.xhr.timeout);
             })
             .then(response => this.transformResponse(response))
             .then(entries => {
@@ -168,7 +168,7 @@ export function serializeQuery(query) {
  * @return  {Promise.<object>}
  */
 
-export function xhr(method, path, data) {
+export function xhr(method, path, data, timeout=10000) {
     const request = new window.XMLHttpRequest();
     const CODE_CLIENT_ERROR = 400;
     const CODE_SERVER_ERROR = 500;
@@ -198,7 +198,7 @@ export function xhr(method, path, data) {
                 request.setRequestHeader('Content-Type', 'application/json');
             }
 
-            request.timeout = 60000;
+            request.timeout = timeout;
 
             return new Promise((resolve, reject) => {
                 request.onload      = resolve;

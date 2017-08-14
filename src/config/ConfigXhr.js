@@ -1,6 +1,7 @@
 class ConfigXhr {
     constructor() {
-        this.path = '';
+        this.path    = '';
+        this.timeout = 10000;
 
         Object.seal(this);
     }

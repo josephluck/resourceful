@@ -18,15 +18,17 @@ Resourceful allows you to create individual "resource" instances, each one provi
 
 Currently, the following integrations exist:
 
-#### ResourceXHR
+#### ResourceXhr
 
 A client-side resource for querying JSON over an API using XHR.
+
+[ResourceXhr Documentation](./docs/ResourceXhr.md)
 
 #### ResourceMongoose
 
 A server-side resource for querying MongoDB documents via Mongoose ODM.
 
-#### ResourceFS
+#### ResourceFs
 
 A server-side resource for querying all files of a type or one specific file in a file-system directory.
 
@@ -46,7 +48,7 @@ The `IResource` interface implements the following API methods, which all resour
 | param  | `object` | [req] | An optional request object to passed to the underlying implementation (e.g. for authentication)
 | param  | `object` | [res] | An optional response object to be passed to the underlying implementation (e.g. for authentication)
 | return | `Promise.<Array.<object>>` | A list of entries matching the query
-  
+
 Returns a Promise resolving with a list of entries matching the provided query.
 
 ### .getOne()
@@ -59,7 +61,7 @@ Returns a Promise resolving with a list of entries matching the provided query.
 | param  | `object` | [req] | An optional request object to passed to the underlying implementation (e.g. for authentication)
 | param  | `object` | [res] | An optional response object to be passed to the underlying implementation (e.g. for authentication)
 | return | `Promise.<Array.<(object,null)>>` | An entry matching the query or null |
-  
+
 Returns a Promise resolving with a single entry matching the provided query, or `null` if none found. This is a shorthand for `.get()[0]`, and can be used when querying by a unique ID.
 
 ### .create()
@@ -70,7 +72,7 @@ Returns a Promise resolving with a single entry matching the provided query, or 
 |--------|--------|-------|-------------
 | param  | `object` | payload | An object containing the data to be created
 | return | `Promise.<object>` | The newly created item
-  
+
 Creates an entry and returns a promise resolving with that new entry on success.
 
 ### .update()
@@ -185,7 +187,7 @@ const people = new ResourceXhr({
         path: '/api/v2.0/people/'
     },
     cache: {
-        primaryKey: 'id'  
+        primaryKey: 'id'
     },
     transform: {
         response: response => response.items,
