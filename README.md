@@ -155,6 +155,38 @@ As above, it is very common for resources to be defined in pairs, so that the ap
 
 The only difference in the above two options would be the configuration.
 
+### Usage
+
+In our universal code, we may then query "people" using the exact same syntax. Imagine the following class:
+
+```js
+class PeopleManager() {
+    constructor(resource) {
+        // A people resource of abitrary type is injected on instantiation
+        
+        this.resource = resource;
+    }
+    
+    /**
+     * @param  {string} name
+     * @return {Promise}
+     */
+    
+    createBoss(name) {
+        const boss = {
+           type: 'boss',
+           name: name
+        };
+        
+        if (!name || typeof name !== string) {
+            throw new TypeError('No valid name provided'); 
+        }
+        
+        return this.resource.create(boss);
+    }
+}
+```
+
 ## Configuration
 
 All resource types implement the common configuration options shown below. In addition to these, implementation specific configuration options exist for each type of integration. These can be found in the integration specific documentation which is linked to in the [Integrations](#integrations) section above.
