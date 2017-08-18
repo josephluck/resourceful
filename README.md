@@ -157,7 +157,7 @@ The only difference in the above two options would be the configuration.
 
 ### Usage
 
-In our universal code, we may then query "people" using the exact same syntax. Imagine the following class:
+In our universal code, we may then interact with our "people" resource using the exact same syntax regardless of environment. Imagine the following class:
 
 ```js
 class PeopleManager() {
@@ -168,8 +168,18 @@ class PeopleManager() {
     }
     
     /**
+     * @return {Promise.<Array.<object>>}
+     */
+    
+    findBosses() {
+        return this.resource.get({
+            type: 'boss'
+        });
+    }
+    
+    /**
      * @param  {string} name
-     * @return {Promise}
+     * @return {Promise.<object>}
      */
     
     createBoss(name) {
