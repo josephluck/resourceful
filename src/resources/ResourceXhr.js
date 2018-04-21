@@ -1,7 +1,10 @@
-import ResourceBase from './ResourceBase';
-import ConfigRoot   from '../config/ConfigRoot';
-import ConfigXhr    from '../config/ConfigXhr';
-import IResource    from '../interfaces/IResource';
+import ResourceBase        from './ResourceBase';
+import ConfigRoot          from '../config/ConfigRoot';
+import ConfigXhr           from '../config/ConfigXhr';
+import IResource           from '../interfaces/IResource';
+
+const XMLHttpRequest = require('xhr2');
+const isNode = require('is-node');
 
 class ResourceXhr extends IResource {}
 
@@ -169,9 +172,11 @@ export function serializeQuery(query) {
  */
 
 export function xhr(method, path, data, timeout=10000) {
-    const request = new window.XMLHttpRequest();
     const CODE_CLIENT_ERROR = 400;
     const CODE_SERVER_ERROR = 500;
+    const request = isNode
+        ? new XMLHttpRequest()
+        : new window.XMLHttpRequest();
 
     let payload = null;
 

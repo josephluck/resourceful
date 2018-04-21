@@ -35,6 +35,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var XMLHttpRequest = require('xhr2');
+var isNode = require('is-node');
+
 var ResourceXhr = function (_IResource) {
     _inherits(ResourceXhr, _IResource);
 
@@ -229,9 +232,9 @@ function serializeQuery(query) {
 function xhr(method, path, data) {
     var timeout = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10000;
 
-    var request = new window.XMLHttpRequest();
     var CODE_CLIENT_ERROR = 400;
     var CODE_SERVER_ERROR = 500;
+    var request = isNode ? new XMLHttpRequest() : new window.XMLHttpRequest();
 
     var payload = null;
 
